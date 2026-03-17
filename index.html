@@ -1313,7 +1313,209 @@ select.ri { appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmln
   .stock-stats { grid-template-columns: 1fr 1fr !important; }
 }
 
+
+/* ── BACKUP MODAL ── */
+.backup-btn-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+.backup-btn {
+  flex: 1;
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 12px;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border-strong);
+  background: var(--surface);
+  cursor: pointer;
+  transition: all .15s;
+  font-family: var(--font);
+}
+.backup-btn:hover { border-color: var(--accent); background: var(--accent-light); }
+.backup-btn svg { color: var(--accent); }
+.backup-btn-label { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.backup-btn-sub { font-size: 11px; color: var(--text-secondary); text-align: center; line-height: 1.4; }
+.backup-info {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+.backup-info strong { color: var(--text-primary); }
+
+
+/* ── SYNC INDICATOR ── */
+.sync-pill {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 20px; padding: 4px 10px 4px 7px;
+  flex-shrink: 0;
+}
+.sync-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #ff9f0a; flex-shrink: 0;
+  transition: background .3s;
+}
+.sync-label {
+  font-size: 11px; color: rgba(255,255,255,0.6);
+  font-family: var(--font); font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ── HISTORIAL DE REMITOS ── */
+.remito-hist-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 16px; border-bottom: 1px solid var(--border);
+  transition: background .1s; cursor: pointer;
+}
+.remito-hist-item:hover { background: var(--surface); }
+.remito-hist-item:last-child { border-bottom: none; }
+
 </style>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getFirestore, collection, doc, setDoc, getDoc, getDocs, deleteDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAdlW9Q-wdo8suESDTKxU9z-jjPoWKelHc",
+      authDomain: "iservice-mercedes.firebaseapp.com",
+      projectId: "iservice-mercedes",
+      storageBucket: "iservice-mercedes.firebasestorage.app",
+      messagingSenderId: "493290051377",
+      appId: "1:493290051377:web:df61a8a3d5f8ef33d70210"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // ── Expose DB helpers globally ──
+    window.DB = {
+      // Save a remito
+      async saveRemito(remito) {
+        try {
+          await setDoc(doc(db, "remitos", remito.numero), {
+            ...remito,
+            updatedAt: serverTimestamp()
+          });
+          return true;
+        } catch(e) { console.error("saveRemito:", e); return false; }
+      },
+
+      // Get all remitos
+      async getRemitos() {
+        try {
+          const snap = await getDocs(collection(db, "remitos"));
+          return snap.docs.map(d => d.data());
+        } catch(e) { console.error("getRemitos:", e); return []; }
+      },
+
+      // Delete remito
+      async deleteRemito(numero) {
+        try {
+          await deleteDoc(doc(db, "remitos", numero));
+          return true;
+        } catch(e) { return false; }
+      },
+
+      // Save stock item
+      async saveStockItem(item) {
+        try {
+          await setDoc(doc(db, "stock", item.id), {
+            ...item,
+            updatedAt: serverTimestamp()
+          });
+          return true;
+        } catch(e) { console.error("saveStock:", e); return false; }
+      },
+
+      // Get all stock
+      async getStock() {
+        try {
+          const snap = await getDocs(collection(db, "stock"));
+          return snap.docs.map(d => d.data());
+        } catch(e) { return []; }
+      },
+
+      // Delete stock item
+      async deleteStockItem(id) {
+        try {
+          await deleteDoc(doc(db, "stock", id));
+          return true;
+        } catch(e) { return false; }
+      },
+
+      // Save iPhone registro
+      async saveIphone(ip) {
+        try {
+          await setDoc(doc(db, "iphones", ip.id), {
+            ...ip,
+            updatedAt: serverTimestamp()
+          });
+          return true;
+        } catch(e) { return false; }
+      },
+
+      // Get all iphones
+      async getIphones() {
+        try {
+          const snap = await getDocs(collection(db, "iphones"));
+          return snap.docs.map(d => d.data());
+        } catch(e) { return []; }
+      },
+
+      // Delete iPhone
+      async deleteIphone(id) {
+        try {
+          await deleteDoc(doc(db, "iphones", id));
+          return true;
+        } catch(e) { return false; }
+      },
+
+      // Listen to remitos in real time
+      listenRemitos(callback) {
+        return onSnapshot(collection(db, "remitos"), snap => {
+          callback(snap.docs.map(d => d.data()));
+        });
+      },
+
+      // Listen to stock in real time
+      listenStock(callback) {
+        return onSnapshot(collection(db, "stock"), snap => {
+          callback(snap.docs.map(d => d.data()));
+        });
+      },
+
+      // Listen to iphones in real time
+      listenIphones(callback) {
+        return onSnapshot(collection(db, "iphones"), snap => {
+          callback(snap.docs.map(d => d.data()));
+        });
+      }
+    };
+
+    // Set online status
+    window.addEventListener('load', () => {
+      const dot = document.getElementById('syncDot');
+      const label = document.getElementById('syncLabel');
+      if (dot && label) {
+        dot.style.background = '#34c759';
+        label.textContent = 'Sincronizado';
+      }
+    });
+
+    console.log("Firebase conectado ✓");
+  </script>
+
 </head>
 <body>
 
@@ -1386,12 +1588,24 @@ select.ri { appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmln
     <button class="nav-tab" onclick="switchTab('dolar',this)">Dólar</button>
   </div>
 
-  <!-- Dólar derecha -->
+  <!-- Dólar + backup derecha -->
+  <div style="display:flex;align-items:center;gap:8px;justify-self:end;">
+    <button onclick="openModal('modal-backup')" title="Exportar / Importar datos"
+      style="background:rgba(255,255,255,0.7);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.6);box-shadow:0 1px 4px rgba(0,0,0,0.08);border-radius:20px;padding:5px 10px;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:var(--font);font-size:11px;font-weight:600;color:var(--text-secondary);transition:all .15s;"
+      onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-secondary)'">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Datos
+    </button>
+    <div class="sync-pill">
+    <div class="sync-dot" id="syncDot"></div>
+    <span class="sync-label" id="syncLabel">Conectando…</span>
+  </div>
   <div class="dolar-pill" id="navDolar">
-    <div class="dolar-dot"></div>
-    <div class="dolar-info">
-      <span class="dolar-label">Blue</span>
-      <span class="dolar-value loading" id="navDolarVal">…</span>
+      <div class="dolar-dot"></div>
+      <div class="dolar-info">
+        <span class="dolar-label">Blue</span>
+        <span class="dolar-value loading" id="navDolarVal">…</span>
+      </div>
     </div>
   </div>
 </nav>
@@ -2757,6 +2971,165 @@ function initStockModelos() {
   });
 }
 
+
+// ══════════════════════════════════════════════
+// SISTEMA DE BACKUP / EXPORTACIÓN
+// ══════════════════════════════════════════════
+
+function getBackupStats() {
+  const agenda   = loadAgenda();
+  const stock    = loadStockCel();
+  const remitos  = [];  // para futuro
+  return { agenda, stock, remitos };
+}
+
+function actualizarBackupStats() {
+  const { agenda, stock } = getBackupStats();
+  const el = document.getElementById('backupStats');
+  if (!el) return;
+  const today = new Date().toISOString().split('T')[0];
+  el.innerHTML = `
+    <strong style="color:var(--text-primary);">Datos guardados en este navegador:</strong><br>
+    📅 Turnos en agenda: <strong>${agenda.length}</strong> (${agenda.filter(t=>t.fecha>=today).length} próximos)<br>
+    📱 Equipos en stock: <strong>${stock.length}</strong> (${stock.filter(e=>!e.vendido).length} disponibles)<br>
+    🕐 Última exportación: <strong id="ultimaExport">${localStorage.getItem('iservice_last_export') || 'Nunca'}</strong>
+  `;
+}
+
+function exportarDatos() {
+  const datos = {
+    version: '1.0',
+    fecha: new Date().toISOString(),
+    agenda: loadAgenda(),
+    stockCel: loadStockCel(),
+  };
+  const json = JSON.stringify(datos, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const fecha = new Date().toLocaleDateString('es-AR').replace(/\//g,'-');
+  a.href     = url;
+  a.download = `iservice-backup-${fecha}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  const ahora = new Date().toLocaleString('es-AR');
+  localStorage.setItem('iservice_last_export', ahora);
+  actualizarBackupStats();
+  mostrarToastBackup('✅ Backup descargado correctamente');
+}
+
+async function copiarDatosClipboard() {
+  const datos = {
+    version: '1.0',
+    fecha: new Date().toISOString(),
+    agenda: loadAgenda(),
+    stockCel: loadStockCel(),
+  };
+  const json = JSON.stringify(datos);
+  try {
+    await navigator.clipboard.writeText(json);
+    mostrarToastBackup('✅ Datos copiados al portapapeles');
+  } catch(e) {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = json;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    mostrarToastBackup('✅ Datos copiados al portapapeles');
+  }
+}
+
+function mostrarPegarDatos() {
+  const area = document.getElementById('pegarDatosArea');
+  area.style.display = area.style.display === 'none' ? 'block' : 'none';
+  if (area.style.display === 'block') {
+    document.getElementById('pegarDatosInput').focus();
+  }
+}
+
+function importarDesdePegado() {
+  const texto = document.getElementById('pegarDatosInput').value.trim();
+  if (!texto) { mostrarToastBackup('❌ No hay datos para importar'); return; }
+  procesarImport(texto);
+}
+
+function importarDesdeArchivo(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => procesarImport(e.target.result);
+  reader.readAsText(file);
+  input.value = ''; // reset
+}
+
+function procesarImport(texto) {
+  try {
+    const datos = JSON.parse(texto);
+
+    // Validar estructura
+    if (!datos.agenda && !datos.stockCel) {
+      mostrarToastBackup('❌ Archivo inválido. No parece un backup de iService.');
+      return;
+    }
+
+    const agendaActual = loadAgenda().length;
+    const stockActual  = loadStockCel().length;
+
+    const msg = `¿Importar backup?
+
+` +
+      `📅 Agenda: ${datos.agenda?.length || 0} turnos
+` +
+      `📱 Stock: ${datos.stockCel?.length || 0} equipos
+
+` +
+      `Esto REEMPLAZARÁ los datos actuales (${agendaActual} turnos y ${stockActual} equipos).
+¿Continuar?`;
+
+    if (!confirm(msg)) return;
+
+    if (datos.agenda)   saveAgenda(datos.agenda);
+    if (datos.stockCel) saveStockCel(datos.stockCel);
+
+    // Refresh UI
+    renderAgenda();
+    renderStockCel();
+    updateHomeStats();
+    actualizarBackupStats();
+    document.getElementById('pegarDatosArea').style.display = 'none';
+
+    mostrarToastBackup(`✅ Importado correctamente · ${datos.agenda?.length||0} turnos y ${datos.stockCel?.length||0} equipos`);
+
+  } catch(e) {
+    mostrarToastBackup('❌ Error al leer el archivo. Verificá que sea un backup válido.');
+  }
+}
+
+function mostrarToastBackup(msg) {
+  // Reutilizar el toast existente si lo hay, o crear uno
+  let toast = document.getElementById('toastBackup');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toastBackup';
+    toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--text-primary);color:white;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:500;z-index:9999;transition:opacity .3s;box-shadow:0 4px 20px rgba(0,0,0,0.2);white-space:nowrap;';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  toast.style.display = 'block';
+  setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => { toast.style.display = 'none'; }, 300); }, 3000);
+}
+
+// Actualizar stats cuando se abre el modal
+document.addEventListener('click', function(e) {
+  if (e.target.closest('[onclick*="modal-backup"]')) {
+    setTimeout(actualizarBackupStats, 50);
+  }
+});
+
 // ── OPEN/CLOSE MODAL ──
 function openModal(id) {
   const el = document.getElementById(id);
@@ -2796,7 +3169,192 @@ function init() {
   setInterval(fetchDolar, 300000);
 }
 
+
+// ─── FIREBASE DATA LAYER ───
+// Wraps window.DB (set by Firebase module) with fallback to localStorage
+
+function dbAvailable() { return typeof window.DB !== 'undefined'; }
+
+function setSyncStatus(status, text) {
+  const dot = document.getElementById('syncDot');
+  const label = document.getElementById('syncLabel');
+  if (!dot) return;
+  const colors = { ok: '#34c759', syncing: '#ff9f0a', error: '#ff3b30' };
+  dot.style.background = colors[status] || colors.syncing;
+  if (label) label.textContent = text;
+}
+
+// ─── REMITO SAVE TO FIREBASE ───
+async function guardarRemitoFirebase(d) {
+  if (!dbAvailable()) return;
+  setSyncStatus('syncing', 'Guardando…');
+  const ok = await window.DB.saveRemito(d);
+  setSyncStatus(ok ? 'ok' : 'error', ok ? 'Guardado ✓' : 'Error');
+  setTimeout(() => setSyncStatus('ok', 'Sincronizado'), 2000);
+}
+
+// ─── LOAD HISTORIAL ───
+async function loadRemitosHistorial() {
+  const container = document.getElementById('remitosHistorial');
+  if (!container) return;
+
+  if (!dbAvailable()) {
+    container.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-tertiary);font-size:13px;">Firebase no disponible aún. Recargá la página.</div>';
+    return;
+  }
+
+  container.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-tertiary);font-size:13px;">Cargando…</div>';
+
+  try {
+    const remitos = await window.DB.getRemitos();
+    if (!remitos.length) {
+      container.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-tertiary);font-size:13px;">No hay órdenes guardadas todavía.</div>';
+      return;
+    }
+
+    // Sort by fecha desc
+    remitos.sort((a,b) => (b.fecha||'').localeCompare(a.fecha||''));
+
+    container.innerHTML = remitos.map(r => {
+      const fechaFmt = r.fecha ? new Date(r.fecha + 'T12:00:00').toLocaleDateString('es-AR', {day:'2-digit',month:'short',year:'numeric'}) : '—';
+      const totalFmt = r.total > 0 ? '$' + Math.round(r.total).toLocaleString('es-AR') : 'A convenir';
+      return `
+        <div class="remito-hist-item">
+          <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;">
+            <div style="background:var(--text-primary);color:white;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;white-space:nowrap;flex-shrink:0;">${r.numero||'—'}</div>
+            <div style="min-width:0;">
+              <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${r.nombre||'Sin nombre'}</div>
+              <div style="font-size:11px;color:var(--text-secondary);">${r.modelo||'—'} · ${fechaFmt}</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+            <span style="font-size:13px;font-weight:700;color:var(--text-primary);">${totalFmt}</span>
+            <button onclick="verRemito('${r.numero}')" style="background:var(--accent);color:white;border:none;border-radius:7px;padding:5px 11px;font-family:var(--font);font-size:11px;font-weight:500;cursor:pointer;">Ver</button>
+            <button onclick="eliminarRemito('${r.numero}')" style="background:transparent;border:1px solid var(--border-strong);color:var(--text-secondary);border-radius:7px;padding:5px 9px;font-family:var(--font);font-size:11px;cursor:pointer;">✕</button>
+          </div>
+        </div>`;
+    }).join('');
+  } catch(e) {
+    container.innerHTML = '<div style="text-align:center;padding:32px;color:var(--red,#ff3b30);font-size:13px;">Error al cargar. Verificá tu conexión.</div>';
+  }
+}
+
+async function eliminarRemito(numero) {
+  if (!confirm('¿Eliminar la orden ' + numero + '?')) return;
+  if (dbAvailable()) {
+    await window.DB.deleteRemito(numero);
+    loadRemitosHistorial();
+  }
+}
+
+// Cache of loaded remitos for viewing
+let _remitosCache = {};
+
+async function verRemito(numero) {
+  if (!dbAvailable()) return;
+  const remitos = await window.DB.getRemitos();
+  const r = remitos.find(x => x.numero === numero);
+  if (!r) return;
+  // Build and show in preview
+  document.getElementById('remitoPreview').innerHTML = buildRemitoHTML(r);
+  // Scroll to preview
+  document.getElementById('remitoPreview').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ─── OVERRIDE imprimirRemito to also save to Firebase ───
+const _origImprimirRemito = window.imprimirRemito;
+async function imprimirRemitoConGuardado() {
+  const d = getRemitoData();
+  // Save to Firebase first
+  await guardarRemitoFirebase(d);
+  // Then print
+  const html = buildRemitoHTML(d, true);
+  let printRoot = document.getElementById('printRoot');
+  if (!printRoot) { printRoot = document.createElement('div'); printRoot.id = 'printRoot'; document.body.appendChild(printRoot); }
+  printRoot.style.cssText = 'display:none;position:fixed;top:0;left:0;width:100%;z-index:9999;background:white;padding:32px;';
+  printRoot.innerHTML = html;
+  window.addEventListener('beforeprint', () => { printRoot.style.display = 'block'; }, {once:true});
+  window.addEventListener('afterprint', () => { printRoot.style.display = 'none'; }, {once:true});
+  window.print();
+  document.getElementById('remitoPreview').innerHTML = html;
+  // Refresh historial
+  setTimeout(loadRemitosHistorial, 1500);
+}
+// Override
+window.imprimirRemito = imprimirRemitoConGuardado;
+
+// ─── Also save when clicking "Actualizar preview" ───
+const _origRenderPreview = window.renderPreview;
+window.renderPreview = function() {
+  if (_origRenderPreview) _origRenderPreview();
+  else {
+    const d = getRemitoData();
+    document.getElementById('remitoPreview').innerHTML = buildRemitoHTML(d);
+  }
+};
+
 init();
+// Load historial after a short delay to allow Firebase to connect
+setTimeout(loadRemitosHistorial, 2000);
 </script>
+
+<!-- MODAL BACKUP -->
+<div class="modal-overlay" id="modal-backup">
+  <div class="modal" style="width:480px;">
+    <div class="modal-title">💾 Exportar / Importar Datos</div>
+
+    <div class="backup-info">
+      <strong>¿Por qué hacer esto?</strong> Los datos de la app (agenda, stock, remitos) se guardan en este navegador y esta PC. Para llevarlos a otro dispositivo o hacer un backup, usá estas opciones.
+    </div>
+
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-secondary);margin-bottom:10px;">Exportar</div>
+    <div class="backup-btn-row" style="margin-bottom:20px;">
+      <button class="backup-btn" onclick="exportarDatos()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span class="backup-btn-label">Descargar backup</span>
+        <span class="backup-btn-sub">Descarga un archivo .json con toda tu agenda, stock y remitos</span>
+      </button>
+      <button class="backup-btn" onclick="copiarDatosClipboard()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        <span class="backup-btn-label">Copiar al portapapeles</span>
+        <span class="backup-btn-sub">Copiá los datos para pegarlos en otro lugar</span>
+      </button>
+    </div>
+
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-secondary);margin-bottom:10px;">Importar</div>
+    <div class="backup-btn-row" style="margin-bottom:20px;">
+      <button class="backup-btn" onclick="document.getElementById('importFileInput').click()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span class="backup-btn-label">Cargar archivo .json</span>
+        <span class="backup-btn-sub">Seleccioná el archivo de backup que descargaste antes</span>
+      </button>
+      <button class="backup-btn" onclick="mostrarPegarDatos()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><clipboard x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+        <span class="backup-btn-label">Pegar datos</span>
+        <span class="backup-btn-sub">Pegá el texto copiado desde otro dispositivo</span>
+      </button>
+    </div>
+
+    <!-- Area para pegar datos (oculta por defecto) -->
+    <div id="pegarDatosArea" style="display:none;margin-bottom:16px;">
+      <div style="font-size:12px;color:var(--text-secondary);margin-bottom:6px;">Pegá el texto del backup acá:</div>
+      <textarea id="pegarDatosInput" style="width:100%;height:100px;border:1px solid var(--border-strong);border-radius:10px;padding:10px;font-family:var(--font);font-size:12px;outline:none;resize:vertical;" placeholder='{"agenda":[],"stockCel":[]...}'></textarea>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button class="btn-primary" onclick="importarDesdePegado()">Importar</button>
+        <button class="btn-outline-sm" onclick="document.getElementById('pegarDatosArea').style.display='none'">Cancelar</button>
+      </div>
+    </div>
+
+    <input type="file" id="importFileInput" accept=".json" style="display:none;" onchange="importarDesdeArchivo(this)">
+
+    <!-- Info de qué hay guardado -->
+    <div style="background:var(--surface);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--text-secondary);" id="backupStats"></div>
+
+    <div style="margin-top:16px;display:flex;justify-content:flex-end;">
+      <button class="btn-outline-sm" onclick="closeModal('modal-backup')">Cerrar</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
