@@ -1500,7 +1500,41 @@ select.ri { appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmln
         return onSnapshot(collection(db, "iphones"), snap => {
           callback(snap.docs.map(d => d.data()));
         });
-      }
+      },
+
+      // Agenda
+      async saveAgendaItem(turno) {
+        await setDoc(doc(db, "agenda", turno.id), { ...turno, updatedAt: serverTimestamp() });
+      },
+      async deleteAgendaItem(id) {
+        await deleteDoc(doc(db, "agenda", id));
+      },
+      listenAgenda(callback) {
+        return onSnapshot(collection(db, "agenda"), snap => {
+          callback(snap.docs.map(d => d.data()).sort((a,b) => (a.fecha+a.hora).localeCompare(b.fecha+b.hora)));
+        });
+      },
+
+      // Stock de celulares
+      async saveStockCelItem(equipo) {
+        await setDoc(doc(db, "stockCel", equipo.id), { ...equipo, updatedAt: serverTimestamp() });
+      },
+      async deleteStockCelItem(id) {
+        await deleteDoc(doc(db, "stockCel", id));
+      },
+      listenStockCel(callback) {
+        return onSnapshot(collection(db, "stockCel"), snap => {
+          callback(snap.docs.map(d => d.data()));
+        });
+      },
+
+      // Expose Firestore primitives for async load functions
+      _db: db,
+      _collection: collection,
+      _getDocs: getDocs,
+      _doc: doc,
+      _setDoc: setDoc,
+      _deleteDoc: deleteDoc
     };
 
     // Set online status
@@ -1514,6 +1548,52 @@ select.ri { appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmln
     });
 
     console.log("Firebase conectado ✓");
+
+    // ── Real-time listeners ──
+    window.addEventListener('load', () => {
+      // Stock cel listener
+      window.DB.listenStockCel(data => {
+        _stockCelCache = data;
+        const tab = document.getElementById('tab-stock-cel');
+        if (tab && tab.classList.contains('active')) renderStockCel();
+        updateHomeStats();
+      });
+
+      // Agenda listener
+      window.DB.listenAgenda(data => {
+        _agendaCache = data;
+        const tab = document.getElementById('tab-agenda');
+        if (tab && tab.classList.contains('active')) renderAgenda();
+        updateHomeStats();
+      });
+
+      // Remitos listener
+      window.DB.listenRemitos(data => {
+        const hist = document.getElementById('remitosHistorial');
+        if (hist) loadRemitosHistorial();
+      });
+
+      // Stock (repuestos) listener  
+      window.DB.listenStock(data => {
+        // update state.stock
+        if (typeof state !== 'undefined') {
+          state.stock = data;
+          const tab = document.getElementById('tab-stock');
+          if (tab && tab.classList.contains('active')) renderStock();
+          renderDashboard();
+        }
+      });
+
+      // iPhones listener
+      window.DB.listenIphones(data => {
+        if (typeof state !== 'undefined') {
+          state.iphones = data;
+          const tab = document.getElementById('tab-iphones');
+          if (tab && tab.classList.contains('active')) renderIphones();
+          renderDashboard();
+        }
+      });
+    });
   </script>
 
 </head>
@@ -2642,11 +2722,47 @@ function switchTabMobile(tab, btn) {
 // ═══════════════════════════════════════════
 const AGENDA_KEY = 'iservice_agenda_v1';
 
-function loadAgenda() {
-  try { return JSON.parse(localStorage.getItem(AGENDA_KEY) || '[]'); } catch(e) { return []; }
+// ── Agenda: Firebase-backed ──
+let _agendaCache = [];
+
+async function loadAgenda() {
+  if (!dbAvailable()) {
+    try { return JSON.parse(localStorage.getItem(AGENDA_KEY) || '[]'); } catch(e) { return []; }
+  }
+  try {
+    const snap = await window.DB._getDocs(window.DB._collection(window.DB._db, 'agenda'));
+    _agendaCache = snap.docs.map(d => d.data()).sort((a,b) => (a.fecha+a.hora).localeCompare(b.fecha+b.hora));
+    return _agendaCache;
+  } catch(e) { return []; }
 }
+
+async function saveAgendaItem(turno) {
+  if (!dbAvailable()) {
+    try {
+      const arr = JSON.parse(localStorage.getItem(AGENDA_KEY) || '[]');
+      const idx = arr.findIndex(x => x.id === turno.id);
+      if (idx >= 0) arr[idx] = turno; else arr.push(turno);
+      localStorage.setItem(AGENDA_KEY, JSON.stringify(arr));
+    } catch(e) {}
+    return;
+  }
+  try { await window.DB.saveAgendaItem(turno); } catch(e) { console.error(e); }
+}
+
+async function deleteAgendaItem(id) {
+  if (!dbAvailable()) {
+    try {
+      const arr = JSON.parse(localStorage.getItem(AGENDA_KEY) || '[]').filter(x => x.id !== id);
+      localStorage.setItem(AGENDA_KEY, JSON.stringify(arr));
+    } catch(e) {}
+    return;
+  }
+  try { await window.DB.deleteAgendaItem(id); } catch(e) { console.error(e); }
+}
+
 function saveAgenda(data) {
-  try { localStorage.setItem(AGENDA_KEY, JSON.stringify(data)); } catch(e) {}
+  // legacy shim - save each item
+  data.forEach(t => saveAgendaItem(t));
 }
 
 function openAgendaModal(id) {
@@ -2659,7 +2775,7 @@ function openAgendaModal(id) {
   openModal('modal-turno');
 }
 
-function guardarTurno() {
+async function guardarTurno() {
   const nombre = document.getElementById('t_nombre').value.trim();
   if (!nombre) { alert('Ingresá el nombre del cliente.'); return; }
   const turno = {
@@ -2673,31 +2789,33 @@ function guardarTurno() {
     obs:     document.getElementById('t_obs').value.trim(),
     estado:  'pendiente'
   };
-  const agenda = loadAgenda();
-  agenda.push(turno);
-  // Sort by fecha+hora
-  agenda.sort((a,b) => (a.fecha+a.hora).localeCompare(b.fecha+b.hora));
-  saveAgenda(agenda);
+  setSyncStatus('syncing', 'Guardando…');
+  await saveAgendaItem(turno);
+  setSyncStatus('ok', 'Guardado ✓');
+  setTimeout(() => setSyncStatus('ok', 'Sincronizado'), 2000);
   closeModal('modal-turno');
-  renderAgenda();
+  await renderAgenda();
   updateHomeStats();
 }
 
-function eliminarTurno(id) {
-  const agenda = loadAgenda().filter(t => t.id !== id);
-  saveAgenda(agenda);
-  renderAgenda();
+async function eliminarTurno(id) {
+  await deleteAgendaItem(id);
+  await renderAgenda();
   updateHomeStats();
 }
 
-function marcarTurnoEstado(id, estado) {
-  const agenda = loadAgenda();
+async function marcarTurnoEstado(id, estado) {
+  const agenda = await loadAgenda();
   const t = agenda.find(x => x.id === id);
-  if (t) { t.estado = estado; saveAgenda(agenda); renderAgenda(); }
+  if (t) {
+    t.estado = estado;
+    await saveAgendaItem(t);
+    await renderAgenda();
+  }
 }
 
-function renderAgenda() {
-  const agenda = loadAgenda();
+async function renderAgenda() {
+  const agenda = await loadAgenda();
   const list = document.getElementById('agendaList');
   const prox = document.getElementById('proximosTurnos');
   if (!list) return;
@@ -2752,11 +2870,47 @@ function agendaItemHTML(t, today) {
 const STOCK_CEL_KEY = 'iservice_stock_cel_v1';
 let tempStockReps = []; // temp reparaciones en modal
 
-function loadStockCel() {
-  try { return JSON.parse(localStorage.getItem(STOCK_CEL_KEY) || '[]'); } catch(e) { return []; }
+// ── Stock Celulares: Firebase-backed ──
+let _stockCelCache = [];
+
+async function loadStockCel() {
+  if (!dbAvailable()) {
+    try { return JSON.parse(localStorage.getItem(STOCK_CEL_KEY) || '[]'); } catch(e) { return []; }
+  }
+  try {
+    const snap = await window.DB._getDocs(window.DB._collection(window.DB._db, 'stockCel'));
+    _stockCelCache = snap.docs.map(d => d.data());
+    return _stockCelCache;
+  } catch(e) { return []; }
 }
+
+async function saveStockCelItem(equipo) {
+  if (!dbAvailable()) {
+    try {
+      const arr = JSON.parse(localStorage.getItem(STOCK_CEL_KEY) || '[]');
+      const idx = arr.findIndex(x => x.id === equipo.id);
+      if (idx >= 0) arr[idx] = equipo; else arr.push(equipo);
+      localStorage.setItem(STOCK_CEL_KEY, JSON.stringify(arr));
+    } catch(e) {}
+    return;
+  }
+  try { await window.DB.saveStockCelItem(equipo); } catch(e) { console.error(e); }
+}
+
+async function deleteStockCelItem(id) {
+  if (!dbAvailable()) {
+    try {
+      const arr = JSON.parse(localStorage.getItem(STOCK_CEL_KEY) || '[]').filter(x => x.id !== id);
+      localStorage.setItem(STOCK_CEL_KEY, JSON.stringify(arr));
+    } catch(e) {}
+    return;
+  }
+  try { await window.DB.deleteStockCelItem(id); } catch(e) { console.error(e); }
+}
+
 function saveStockCel(data) {
-  try { localStorage.setItem(STOCK_CEL_KEY, JSON.stringify(data)); } catch(e) {}
+  // legacy shim
+  data.forEach(e => saveStockCelItem(e));
 }
 
 function openStockModal(editId) {
@@ -2855,11 +3009,10 @@ function guardarStockCel() {
     vendido: false,
   };
 
-  const stock = loadStockCel();
-  const idx = stock.findIndex(e => e.id === equipo.id);
-  if (idx >= 0) stock[idx] = equipo;
-  else stock.push(equipo);
-  saveStockCel(stock);
+  setSyncStatus('syncing', 'Guardando…');
+  await saveStockCelItem(equipo);
+  setSyncStatus('ok', 'Guardado ✓');
+  setTimeout(() => setSyncStatus('ok', 'Sincronizado'), 2000);
   closeModal('modal-stock-cel');
   renderStockCel();
   updateHomeStats();
@@ -2867,6 +3020,7 @@ function guardarStockCel() {
 
 function eliminarStockCel(id) {
   if (!confirm('¿Eliminar este equipo del stock?')) return;
+  await deleteStockCelItem(id);
   saveStockCel(loadStockCel().filter(e => e.id !== id));
   renderStockCel();
   updateHomeStats();
@@ -2878,8 +3032,8 @@ function marcarVendido(id) {
   if (eq) { eq.vendido = !eq.vendido; saveStockCel(stock); renderStockCel(); updateHomeStats(); }
 }
 
-function renderStockCel() {
-  const stock = loadStockCel();
+async function renderStockCel() {
+  const stock = await loadStockCel();
   const list  = document.getElementById('stockList');
   if (!list) return;
 
@@ -3165,6 +3319,8 @@ function init() {
   renderStockCel();
   updateHomeStats();
   checkAuth();
+  // Load all data from Firebase after short delay (wait for Firebase SDK to initialize)
+  setTimeout(async () => { await loadStateFromFirebase(); }, 2000);
   // Refresh dolar every 5 min
   setInterval(fetchDolar, 300000);
 }
@@ -3174,6 +3330,26 @@ function init() {
 // Wraps window.DB (set by Firebase module) with fallback to localStorage
 
 function dbAvailable() { return typeof window.DB !== 'undefined'; }
+
+async function loadStateFromFirebase() {
+  if (!dbAvailable()) return;
+  try {
+    setSyncStatus('syncing', 'Cargando…');
+    const [stockData, iphonesData] = await Promise.all([
+      window.DB.getStock(),
+      window.DB.getIphones()
+    ]);
+    if (stockData.length > 0) state.stock = stockData;
+    if (iphonesData.length > 0) state.iphones = iphonesData;
+    renderDashboard();
+    renderStock();
+    renderIphones();
+    setSyncStatus('ok', 'Sincronizado ✓');
+  } catch(e) {
+    console.error('loadStateFromFirebase:', e);
+    setSyncStatus('error', 'Error sync');
+  }
+}
 
 function setSyncStatus(status, text) {
   const dot = document.getElementById('syncDot');
