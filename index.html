@@ -1,0 +1,2802 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iService.Mercedes — Reparaciones</title>
+<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&family=SF+Pro+Text:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --surface: #f5f5f7;
+  --surface2: #e8e8ed;
+  --border: rgba(0,0,0,0.08);
+  --border-strong: rgba(0,0,0,0.14);
+  --text-primary: #1d1d1f;
+  --text-secondary: #6e6e73;
+  --text-tertiary: #aeaeb2;
+  --accent: #0071e3;
+  --accent-hover: #0077ed;
+  --accent-light: rgba(0,113,227,0.08);
+  --green: #34c759;
+  --red: #ff3b30;
+  --orange: #ff9f0a;
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 22px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06);
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+  --blur: blur(20px);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* NAV */
+/* ── LIQUID GLASS NAV ── */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  height: 58px;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  /* Liquid Glass background */
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: saturate(180%) blur(28px);
+  -webkit-backdrop-filter: saturate(180%) blur(28px);
+  border-bottom: 1px solid rgba(255,255,255,0.6);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.8) inset,
+    0 -1px 0 rgba(0,0,0,0.04) inset,
+    0 2px 12px rgba(0,0,0,0.06);
+}
+/* subtle rainbow sheen */
+.nav::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    rgba(255,255,255,0.0) 0%,
+    rgba(255,255,255,0.18) 30%,
+    rgba(200,230,255,0.12) 60%,
+    rgba(255,255,255,0.0) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+.nav > * { position: relative; z-index: 1; }
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.nav-logo-icon {
+  width: 28px;
+  height: 28px;
+  background: var(--text-primary);
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.nav-logo-icon svg { width:16px; height:16px; fill:white; }
+
+.nav-brand {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+}
+
+.nav-brand span {
+  color: var(--accent);
+}
+
+.nav-tabs {
+  display: flex;
+  gap: 1px;
+  background: rgba(0,0,0,0.06);
+  border-radius: 12px;
+  padding: 3px;
+  /* Glass pill container */
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.5);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08) inset;
+}
+
+.nav-tab {
+  background: none;
+  border: none;
+  font-family: var(--font);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  padding: 5px 13px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: all .18s ease;
+  white-space: nowrap;
+  letter-spacing: -0.1px;
+}
+
+.nav-tab:hover { color: var(--text-primary); background: rgba(255,255,255,0.4); }
+
+.nav-tab.active {
+  background: rgba(255,255,255,0.88);
+  color: var(--text-primary);
+  font-weight: 600;
+  box-shadow:
+    0 1px 4px rgba(0,0,0,0.12),
+    0 0 0 0.5px rgba(0,0,0,0.06),
+    0 1px 0 rgba(255,255,255,0.9) inset;
+}
+
+/* DOLAR PILL */
+.dolar-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.6);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  border-radius: 20px;
+  padding: 5px 12px 5px 8px;
+  font-size: 12px;
+  flex-shrink: 0;
+  justify-self: end;
+}
+
+.dolar-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulse {
+  0%,100% { opacity:1; }
+  50% { opacity:.4; }
+}
+
+.dolar-info { display:flex; flex-direction:column; gap:1px; }
+.dolar-label { color: var(--text-tertiary); font-size: 10px; font-weight: 500; letter-spacing:.3px; text-transform:uppercase; line-height:1; }
+.dolar-value { font-weight: 600; color: var(--text-primary); font-size: 13px; line-height:1; }
+.dolar-value.loading { color: var(--text-tertiary); }
+
+/* MAIN */
+.main { max-width: 1080px; margin: 0 auto; padding: 32px 24px 64px; }
+
+/* TABS */
+.tab-pane { display: none; animation: fadeIn .2s ease; }
+.tab-pane.active { display: block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+
+/* PAGE HEADER */
+.page-header {
+  margin-bottom: 32px;
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.6px;
+  color: var(--text-primary);
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+
+.page-sub {
+  font-size: 15px;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+/* SELECTOR CARD */
+.selector-card {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  margin-bottom: 24px;
+}
+
+.selectors-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 0;
+}
+
+.sel-group { display: flex; flex-direction: column; gap: 6px; }
+
+.sel-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.sel-control {
+  background: white;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 11px 14px;
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--text-primary);
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236e6e73' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+  cursor: pointer;
+  transition: border-color .15s;
+  width: 100%;
+}
+
+.sel-control:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+.sel-control:disabled { opacity: .5; cursor: default; }
+
+/* RESULT */
+.result-wrap {
+  animation: fadeIn .2s ease;
+}
+
+/* HERO RESULT CARD */
+.hero-card {
+  background: var(--text-primary);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  color: white;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-card::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -10%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.hero-model {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+
+.hero-repair {
+  font-size: 14px;
+  color: rgba(255,255,255,0.55);
+  margin-top: 4px;
+  font-weight: 400;
+}
+
+.hero-badge {
+  background: rgba(255,255,255,0.12);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.8);
+  white-space: nowrap;
+}
+
+.hero-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: rgba(255,255,255,0.08);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.metric {
+  background: rgba(255,255,255,0.04);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metric-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+
+.metric-value {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  line-height: 1;
+}
+
+.metric-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+}
+
+.metric.highlight .metric-value { color: #34d058; }
+.metric.accent-blue .metric-value { color: #64b5f6; }
+
+.hero-obs {
+  background: rgba(255,165,0,0.12);
+  border: 1px solid rgba(255,165,0,0.2);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 12px;
+  color: rgba(255,200,100,0.9);
+  line-height: 1.5;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+/* PRICE ADJUSTER */
+.adjuster-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.adjuster-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.adjuster-input-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 160px;
+  max-width: 200px;
+}
+
+.adjuster-prefix {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.adjuster-input {
+  width: 100%;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 10px 12px 10px 26px;
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 600;
+  outline: none;
+  transition: border-color .15s;
+  background: white;
+}
+
+.adjuster-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+
+.adjuster-result {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.adjuster-result strong { color: var(--text-primary); }
+
+.adjuster-result .gain-pos { color: var(--green); font-weight: 600; }
+.adjuster-result .gain-neg { color: var(--red); font-weight: 600; }
+
+/* TABLE */
+.card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: var(--surface);
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.search-wrap {
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-tertiary);
+  pointer-events: none;
+}
+
+.search-input {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 8px 12px 8px 32px;
+  font-family: var(--font);
+  font-size: 13px;
+  outline: none;
+  width: 240px;
+  background: white;
+  transition: border-color .15s;
+}
+
+.search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+
+.model-select {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 8px 28px 8px 12px;
+  font-family: var(--font);
+  font-size: 13px;
+  outline: none;
+  appearance: none;
+  background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%236e6e73' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 10px center;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+
+.model-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+
+/* TABLE STYLES */
+table { width:100%; border-collapse:collapse; font-size:13px; }
+
+thead th {
+  background: var(--surface);
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background .1s;
+}
+
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--surface); }
+
+tbody td {
+  padding: 11px 16px;
+  vertical-align: middle;
+}
+
+.td-model { font-weight: 500; }
+.td-num { font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.td-num-dim { color: var(--text-secondary); font-size: 12px; }
+.td-gain { color: var(--green); font-weight: 600; font-variant-numeric: tabular-nums; }
+.td-demora { color: var(--text-tertiary); font-size: 12px; }
+.td-badge {
+  display: inline-block;
+  background: rgba(0,113,227,0.08);
+  color: var(--accent);
+  border-radius: 5px;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* PROVEEDOR */
+.prov-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  margin-bottom: 0;
+}
+
+.prov-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.prov-header {
+  background: var(--surface);
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.prov-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.prov-sub {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+.prov-body { padding: 4px 0; }
+
+.prov-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 18px;
+  border-bottom: 1px solid var(--border);
+  transition: background .1s;
+}
+
+.prov-row:last-child { border-bottom: none; }
+.prov-row:hover { background: var(--surface); }
+
+.prov-name { font-size: 13px; color: var(--text-primary); }
+
+.prov-prices {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.prov-usd {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
+.prov-ars {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* EMPTY */
+.empty-state {
+  text-align: center;
+  padding: 60px 24px;
+  color: var(--text-tertiary);
+}
+
+.empty-state p {
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+/* TC WIDGET IN CONSULTA */
+.tc-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tc-label { font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+
+.tc-input {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 6px 10px;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  outline: none;
+  width: 110px;
+  text-align: right;
+  transition: border-color .15s;
+}
+
+.tc-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+
+.tc-source { font-size: 11px; color: var(--text-tertiary); }
+
+/* DOLAR CARDS */
+.dolar-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.dolar-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  border: 1px solid var(--border);
+}
+
+.dolar-card-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.dolar-card-buy { font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
+.dolar-card-sell { font-size: 22px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.4px; }
+.dolar-card-sell span { font-size: 13px; font-weight: 400; color: var(--text-tertiary); }
+
+.btn-use {
+  margin-top: 10px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 7px;
+  padding: 6px 12px;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  transition: background .15s;
+}
+
+.btn-use:hover { background: var(--accent-hover); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width:5px; height:5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface2); border-radius:3px; }
+
+/* RESPONSIVE */
+@media(max-width:768px) {
+  .selectors-row { grid-template-columns: 1fr; }
+  .hero-metrics { grid-template-columns: 1fr 1fr; }
+  .nav-tabs { display: none; }
+  .search-input { width: 160px; }
+}
+
+@media(max-width:500px) {
+  .hero-metrics { grid-template-columns: 1fr 1fr; }
+  .main { padding: 20px 16px 48px; }
+}
+
+/* ── REMITO FORM STYLES ── */
+.rc { background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm); }
+.rc-title { font-size:13px;font-weight:600;color:var(--text-primary);display:flex;align-items:center;gap:7px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border); }
+.rf { display:flex;flex-direction:column;gap:5px; }
+.rf2 { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
+.rf label { font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.4px; }
+.ri { border:1px solid var(--border-strong);border-radius:9px;padding:9px 12px;font-family:var(--font);font-size:13px;color:var(--text-primary);background:var(--surface);outline:none;transition:border-color .15s,box-shadow .15s;width:100%; }
+.ri:focus { border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,113,227,.1);background:white; }
+textarea.ri { resize:vertical; }
+select.ri { appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%236e6e73' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;cursor:pointer; }
+.rck { display:flex;align-items:center;gap:7px;font-size:13px;color:var(--text-primary);cursor:pointer;padding:3px 0; }
+.rck input { width:15px;height:15px;accent-color:var(--accent);cursor:pointer;flex-shrink:0; }
+
+/* ── PRINT STYLES ── */
+@media print {
+  * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+  body > *:not(#printRoot) { display:none !important; }
+  #printRoot { display:block !important; position:fixed;top:0;left:0;width:100%;z-index:9999;background:white; }
+}
+
+/* ── REMITO DOCUMENT ── */
+.remito-doc {
+  font-family: 'Inter', -apple-system, sans-serif;
+  color: #1d1d1f;
+  max-width: 780px;
+  margin: 0 auto;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.remito-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #1d1d1f;
+  margin-bottom: 20px;
+}
+.remito-brand-name {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #1d1d1f;
+}
+.remito-brand-sub {
+  font-size: 11px;
+  color: #6e6e73;
+  margin-top: 2px;
+}
+.remito-header-right {
+  text-align: right;
+}
+.remito-num {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1d1d1f;
+  letter-spacing: -0.3px;
+}
+.remito-num-label {
+  font-size: 10px;
+  color: #6e6e73;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 3px;
+}
+.remito-fecha {
+  font-size: 12px;
+  color: #6e6e73;
+  margin-top: 3px;
+}
+.remito-section {
+  margin-bottom: 16px;
+}
+.remito-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  color: #6e6e73;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #e5e5ea;
+}
+.remito-grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.remito-block {
+  background: #f5f5f7;
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.remito-block-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  color: #6e6e73;
+  margin-bottom: 10px;
+}
+.remito-field {
+  margin-bottom: 6px;
+  display: flex;
+  gap: 6px;
+}
+.remito-field-label {
+  font-size: 11px;
+  color: #6e6e73;
+  flex-shrink: 0;
+  min-width: 70px;
+}
+.remito-field-value {
+  font-size: 12px;
+  font-weight: 500;
+  color: #1d1d1f;
+}
+.checkin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px 10px;
+}
+.checkin-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #1d1d1f;
+}
+.check-box {
+  width: 13px;
+  height: 13px;
+  border: 1.5px solid #aeaeb2;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: white;
+}
+.check-box.checked {
+  background: #1d1d1f;
+  border-color: #1d1d1f;
+}
+.check-box.checked::after {
+  content: '';
+  width: 5px;
+  height: 3px;
+  border-left: 1.5px solid white;
+  border-bottom: 1.5px solid white;
+  transform: rotate(-45deg) translate(0.5px, -0.5px);
+}
+.remito-servicio-box {
+  background: #f5f5f7;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+.remito-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background: #1d1d1f;
+  color: white;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+.remito-total-label {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: .7;
+}
+.remito-total-value {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+.remito-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e5ea;
+  margin-top: 4px;
+}
+.remito-sign-area {
+  text-align: center;
+}
+.remito-sign-line {
+  border-bottom: 1px solid #aeaeb2;
+  height: 36px;
+  margin-bottom: 6px;
+}
+.remito-sign-label {
+  font-size: 10px;
+  color: #aeaeb2;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.remito-legal {
+  background: #f5f5f7;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 10px;
+  color: #6e6e73;
+  line-height: 1.5;
+}
+
+
+/* ── LOGIN ── */
+#loginOverlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #f5f5f7;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+}
+.login-card {
+  background: white;
+  border-radius: 20px;
+  padding: 40px 36px;
+  width: 340px;
+  max-width: 90vw;
+  box-shadow: 0 8px 40px rgba(0,0,0,.10);
+  text-align: center;
+}
+.login-icon {
+  width: 52px; height: 52px;
+  background: #1d1d1f;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 18px;
+}
+.login-icon svg { fill: white; width: 28px; height: 28px; }
+.login-title { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 4px; }
+.login-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 24px; }
+.login-input {
+  width: 100%; border: 1px solid var(--border-strong);
+  border-radius: 12px; padding: 12px 14px;
+  font-family: var(--font); font-size: 15px;
+  text-align: center; letter-spacing: 4px;
+  outline: none; transition: border-color .15s, box-shadow .15s;
+  margin-bottom: 14px;
+}
+.login-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,113,227,.1); }
+.login-btn {
+  width: 100%; background: #1d1d1f; color: white;
+  border: none; border-radius: 12px;
+  padding: 13px; font-family: var(--font);
+  font-size: 15px; font-weight: 600; cursor: pointer;
+  transition: background .15s;
+}
+.login-btn:hover { background: #333; }
+.login-error {
+  margin-top: 12px; color: #ff3b30;
+  font-size: 12px; min-height: 16px;
+}
+.login-lock {
+  margin-top: 14px; font-size: 11px;
+  color: var(--text-tertiary);
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+}
+
+/* ── RESPONSIVE GLOBAL ── */
+@media (max-width: 768px) {
+  .nav { padding: 0 14px; gap: 10px; }
+  .nav-brand { font-size: 13px; }
+  .nav-tabs { display: none !important; }
+  .mobile-nav { display: flex !important; }
+  .dolar-pill { padding: 4px 8px 4px 6px; }
+  .main { padding: 16px 14px 48px; }
+  .page-title { font-size: 24px; }
+  .page-sub { font-size: 13px; }
+  .selectors-row { grid-template-columns: 1fr !important; }
+  .hero-metrics { grid-template-columns: 1fr 1fr !important; }
+  .adjuster-card { flex-direction: column; align-items: flex-start; }
+  .rg2 { grid-template-columns: 1fr !important; }
+  .rf2 { grid-template-columns: 1fr !important; }
+  .dolar-cards { grid-template-columns: 1fr 1fr !important; }
+  .remito-grid2 { grid-template-columns: 1fr !important; }
+  .remito-header { flex-direction: column; gap: 12px; }
+  .remito-footer { grid-template-columns: 1fr !important; }
+  .checkin-grid { grid-template-columns: 1fr 1fr !important; }
+  .card-header { flex-direction: column; align-items: flex-start; }
+  .search-input { width: 100% !important; }
+  .prov-grid { grid-template-columns: 1fr !important; }
+  table { font-size: 12px; }
+  thead th { padding: 8px 10px; font-size: 9px; }
+  tbody td { padding: 8px 10px; }
+  .metric-value { font-size: 16px; }
+  .hero-card { padding: 20px; }
+  .hero-model { font-size: 20px; }
+  .selector-card { padding: 18px; }
+  .rc { padding: 16px; }
+  .remito-preview-wrap { padding: 14px !important; }
+}
+
+/* ── MOBILE NAV BAR (bottom) ── */
+.mobile-nav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  z-index: 150;
+  padding: 8px 0 env(safe-area-inset-bottom, 8px);
+}
+.mobile-nav-items {
+  display: flex; justify-content: space-around; align-items: center;
+}
+.mobile-nav-btn {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 3px; background: none; border: none;
+  font-family: var(--font); font-size: 10px; font-weight: 500;
+  color: var(--text-tertiary); cursor: pointer; padding: 4px 8px;
+  transition: color .15s; min-width: 52px;
+}
+.mobile-nav-btn.active { color: var(--accent); }
+.mobile-nav-btn svg { width: 22px; height: 22px; }
+
+@media (max-width: 768px) {
+  .main { padding-bottom: 80px !important; }
+}
+
+
+/* ── HOME CARDS ── */
+.home-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+}
+.home-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.home-stat {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+.home-stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  color: var(--text-tertiary);
+  margin-bottom: 4px;
+}
+.home-stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  color: var(--text-primary);
+}
+.home-stat-value.accent { color: var(--accent); }
+
+/* ── AGENDA ITEMS ── */
+.agenda-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.agenda-item:last-child { border-bottom: none; }
+.agenda-time {
+  background: var(--accent);
+  color: white;
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 52px;
+  text-align: center;
+}
+.agenda-time.past { background: var(--surface2); color: var(--text-secondary); }
+.agenda-time.today { background: var(--green); }
+.agenda-info { flex: 1; min-width: 0; }
+.agenda-cliente { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.agenda-detalle { font-size: 11px; color: var(--text-secondary); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.agenda-del { background: none; border: none; color: var(--text-tertiary); cursor: pointer; font-size: 16px; padding: 2px 4px; }
+.agenda-del:hover { color: var(--red); }
+
+/* ── STOCK CEL CARDS ── */
+.stock-cel-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 12px;
+}
+.stock-cel-header {
+  background: var(--surface);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.stock-cel-model { font-size: 15px; font-weight: 700; letter-spacing: -0.2px; }
+.stock-cel-badges { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.stock-badge {
+  font-size: 10px; font-weight: 600; padding: 2px 8px;
+  border-radius: 6px; text-transform: uppercase; letter-spacing: .3px;
+}
+.stock-badge-grade { background: rgba(0,113,227,0.1); color: var(--accent); }
+.stock-badge-venta { background: rgba(52,199,89,0.1); color: #1a7a3a; }
+.stock-badge-vendido { background: var(--text-primary); color: white; }
+
+.stock-cel-body { padding: 14px 16px; }
+.stock-cel-nums {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.stock-num-cell {
+  background: var(--bg);
+  padding: 10px 12px;
+}
+.stock-num-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--text-tertiary); margin-bottom: 3px; }
+.stock-num-val { font-size: 14px; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+.stock-num-val.green { color: var(--green); }
+.stock-num-val.accent { color: var(--accent); }
+
+.stock-rep-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.stock-rep-chip {
+  font-size: 11px; background: var(--surface); border-radius: 6px;
+  padding: 3px 8px; color: var(--text-secondary);
+}
+
+.stock-cel-actions { display: flex; gap: 8px; margin-top: 12px; }
+
+.stock-stat-cell {
+  background: var(--bg);
+  padding: 16px;
+}
+.stock-stat-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; color: var(--text-secondary); margin-bottom: 4px; }
+.stock-stat-val { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; color: var(--text-primary); }
+.stock-stat-val.accent { color: var(--accent); }
+
+/* ── EXTRA BUTTONS ── */
+.btn-add-small {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s;
+}
+.btn-add-small:hover { background: var(--accent-hover); }
+
+.btn-primary-lg {
+  background: var(--text-primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s;
+  white-space: nowrap;
+}
+.btn-primary-lg:hover { background: #333; }
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s;
+}
+.btn-primary:hover { background: var(--accent-hover); }
+
+.btn-outline-sm {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s;
+}
+.btn-outline-sm:hover { background: var(--surface); }
+
+.btn-edit-sm {
+  background: var(--surface);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s;
+}
+.btn-edit-sm:hover { background: var(--surface2); color: var(--text-primary); }
+
+.btn-del-sm {
+  background: transparent;
+  color: var(--text-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-family: var(--font);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.btn-del-sm:hover { background: rgba(255,59,48,0.08); color: var(--red); border-color: rgba(255,59,48,0.3); }
+
+/* ── MODAL (override for new modals) ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10,10,10,0.45);
+  backdrop-filter: blur(8px);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--bg);
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(0,0,0,0.06);
+  width: 480px;
+  max-width: 95vw;
+}
+.modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── SC REP ROW ── */
+.sc-rep-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: var(--surface);
+  border-radius: 8px;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+/* RESPONSIVE extras */
+@media(max-width:768px) {
+  .stock-cel-nums { grid-template-columns: 1fr 1fr !important; }
+  .stock-stats { grid-template-columns: 1fr 1fr !important; }
+}
+
+</style>
+</head>
+<body>
+
+<div id="loginOverlay">
+  <div class="login-card">
+    <div class="login-icon">
+      <svg viewBox="0 0 814 1000"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 376.7 0 248.7 0 124.8 0 56.1 24.7 11.9 68.3 11.9c84.7 0 176.7 106.2 189.8 121.4 26.3 29.9 73.6 77.2 109 77.2s73.2-14.4 104.6-31.5c12.1-6.6 36.5-15.3 63.5-15.3 4.5 0 109 3.1 173.5 69.3z"/></svg>
+    </div>
+    <div class="login-title">iService.Mercedes</div>
+    <div class="login-sub">Sistema de Gestión · Acceso privado</div>
+    <input class="login-input" type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password"
+      onkeydown="if(event.key==='Enter') doLogin()">
+    <button class="login-btn" onclick="doLogin()">Ingresar</button>
+    <div class="login-error" id="loginError"></div>
+    <div class="login-lock">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Acceso solo para el titular
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-items">
+    <button class="mobile-nav-btn active" onclick="switchTabMobile('home',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Home
+    </button>
+    <button class="mobile-nav-btn" onclick="switchTabMobile('stock',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+      Stock
+    </button>
+    <button class="mobile-nav-btn" onclick="switchTabMobile('tabla',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+      Precios
+    </button>
+    <button class="mobile-nav-btn" onclick="switchTabMobile('usados',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+      Usados
+    </button>
+    <button class="mobile-nav-btn" onclick="switchTabMobile('remito',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Remito
+    </button>
+    <button class="mobile-nav-btn" onclick="switchTabMobile('dolar',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Dólar
+    </button>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <!-- Logo izquierda -->
+  <div class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 814 1000"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 376.7 0 248.7 0 124.8 0 56.1 24.7 11.9 68.3 11.9c84.7 0 176.7 106.2 189.8 121.4 26.3 29.9 73.6 77.2 109 77.2s73.2-14.4 104.6-31.5c12.1-6.6 36.5-15.3 63.5-15.3 4.5 0 109 3.1 173.5 69.3z"/></svg>
+    </div>
+    <span class="nav-brand">iService.<span>Mercedes</span></span>
+  </div>
+
+  <!-- Tabs centradas -->
+  <div class="nav-tabs" id="navTabs">
+    <button class="nav-tab active" onclick="switchTab('home',this)">Home</button>
+    <button class="nav-tab" onclick="switchTab('stock',this)">Stock</button>
+    <button class="nav-tab" onclick="switchTab('tabla',this)">Precios</button>
+    <button class="nav-tab" onclick="switchTab('proveedores',this)">Proveedores</button>
+    <button class="nav-tab" onclick="switchTab('usados',this)">Usados</button>
+    <button class="nav-tab" onclick="switchTab('remito',this)">Remitos</button>
+    <button class="nav-tab" onclick="switchTab('dolar',this)">Dólar</button>
+  </div>
+
+  <!-- Dólar derecha -->
+  <div class="dolar-pill" id="navDolar">
+    <div class="dolar-dot"></div>
+    <div class="dolar-info">
+      <span class="dolar-label">Blue</span>
+      <span class="dolar-value loading" id="navDolarVal">…</span>
+    </div>
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- ===== HOME ===== -->
+  <div class="tab-pane active" id="tab-home">
+
+    <!-- TC row -->
+    <div class="tc-row" style="margin-bottom:20px;">
+      <span class="tc-label">Tipo de cambio:</span>
+      <input class="tc-input" type="number" id="tcInput" value="1300" min="1" oninput="onTCChange()">
+      <span class="tc-source" id="tcSource">ARS/USD</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;" class="rg2">
+
+      <!-- COLUMNA IZQUIERDA: Consulta rápida + Agenda -->
+      <div style="display:flex;flex-direction:column;gap:16px;">
+
+        <!-- Consulta rápida -->
+        <div class="home-card">
+          <div class="home-card-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            Consulta de Reparación
+          </div>
+          <div class="selectors-row" style="margin-bottom:12px;">
+            <div class="sel-group">
+              <span class="sel-label">Modelo</span>
+              <select class="sel-control" id="selModelo" onchange="onModeloChange()">
+                <option value="">Elegí un modelo…</option>
+              </select>
+            </div>
+            <div class="sel-group">
+              <span class="sel-label">Reparación</span>
+              <select class="sel-control" id="selRep" onchange="onRepChange()" disabled>
+                <option value="">Primero elegí un modelo…</option>
+              </select>
+            </div>
+          </div>
+          <div id="resultArea">
+            <div class="empty-state" style="padding:28px 12px;">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+              <p style="font-size:12px;">Seleccioná modelo y reparación</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Agenda de Turnos -->
+        <div class="home-card" style="flex:1;">
+          <div class="home-card-title" style="justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:7px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Agenda de Turnos
+            </div>
+            <button onclick="openAgendaModal()" class="btn-add-small">+ Turno</button>
+          </div>
+          <div id="agendaList">
+            <div class="empty-state" style="padding:24px 12px;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <p style="font-size:12px;">Sin turnos agendados</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- COLUMNA DERECHA: Mini stock + resumen -->
+      <div style="display:flex;flex-direction:column;gap:16px;">
+
+        <!-- Resumen del día -->
+        <div class="home-card">
+          <div class="home-card-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Resumen
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;" id="homeResumen">
+            <div class="home-stat">
+              <div class="home-stat-label">Turnos hoy</div>
+              <div class="home-stat-value" id="hs-turnos">0</div>
+            </div>
+            <div class="home-stat">
+              <div class="home-stat-label">Celulares en stock</div>
+              <div class="home-stat-value" id="hs-stock">0</div>
+            </div>
+            <div class="home-stat">
+              <div class="home-stat-label">Inversión stock</div>
+              <div class="home-stat-value" id="hs-inversion">$0</div>
+            </div>
+            <div class="home-stat">
+              <div class="home-stat-label">Ganancia potencial</div>
+              <div class="home-stat-value accent" id="hs-ganancia">$0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Próximos turnos -->
+        <div class="home-card" style="flex:1;">
+          <div class="home-card-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Próximos Turnos
+          </div>
+          <div id="proximosTurnos">
+            <div class="empty-state" style="padding:24px 12px;">
+              <p style="font-size:12px;">Sin turnos próximos</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MODAL TURNO -->
+  <div class="modal-overlay" id="modal-turno">
+    <div class="modal" style="width:460px;">
+      <div class="modal-title">NUEVO TURNO</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+        <div class="r-field" style="grid-column:span 2;"><label>Nombre del cliente</label><input id="t_nombre" class="ri" type="text" placeholder="Ej: Juan García"></div>
+        <div class="r-field"><label>Teléfono</label><input id="t_tel" class="ri" type="text" placeholder="+54 9..."></div>
+        <div class="r-field"><label>Modelo iPhone</label><select id="t_modelo" class="ri"><option value="">Seleccionar…</option></select></div>
+        <div class="r-field"><label>Fecha</label><input id="t_fecha" class="ri" type="date"></div>
+        <div class="r-field"><label>Hora</label><input id="t_hora" class="ri" type="time" value="10:00"></div>
+        <div class="r-field" style="grid-column:span 2;"><label>Servicio / Motivo</label><textarea id="t_servicio" class="ri" rows="2" placeholder="Ej: Cambio de batería, pantalla rota…"></textarea></div>
+        <div class="r-field" style="grid-column:span 2;"><label>Observaciones</label><textarea id="t_obs" class="ri" rows="1" placeholder="Notas adicionales…"></textarea></div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn-primary" onclick="guardarTurno()">Guardar Turno</button>
+        <button class="btn-outline-sm" onclick="closeModal('modal-turno')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ===== STOCK CELULARES ===== -->
+  <div class="tab-pane" id="tab-stock">
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:24px;">
+      <div>
+        <h1 class="page-title">Stock de Celulares</h1>
+        <p class="page-sub">Equipos disponibles para la venta · costo, reparaciones y margen</p>
+      </div>
+      <button onclick="openStockModal()" class="btn-primary-lg">+ Agregar Equipo</button>
+    </div>
+
+    <!-- Stats -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border-strong);border:1px solid var(--border-strong);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:20px;" id="stockStats">
+      <div class="stock-stat-cell"><div class="stock-stat-label">Equipos</div><div class="stock-stat-val" id="ss-qty">0</div></div>
+      <div class="stock-stat-cell"><div class="stock-stat-label">Inversión total</div><div class="stock-stat-val" id="ss-inv">$0</div></div>
+      <div class="stock-stat-cell"><div class="stock-stat-label">Venta potencial</div><div class="stock-stat-val" id="ss-venta">$0</div></div>
+      <div class="stock-stat-cell"><div class="stock-stat-label">Ganancia neta</div><div class="stock-stat-val accent" id="ss-gan">$0</div></div>
+    </div>
+
+    <!-- Lista -->
+    <div id="stockList">
+      <div class="empty-state" style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:60px;">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        <p>Sin equipos en stock. Agregá uno.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL STOCK CELULAR -->
+  <div class="modal-overlay" id="modal-stock-cel">
+    <div class="modal" style="width:520px;max-height:90vh;overflow-y:auto;">
+      <div class="modal-title" id="stockModalTitle">AGREGAR EQUIPO</div>
+      <input type="hidden" id="stock_edit_id">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+        <div class="r-field"><label>Modelo *</label><select id="sc_modelo" class="ri"><option value="">Seleccionar…</option></select></div>
+        <div class="r-field"><label>Color / Capacidad</label><input id="sc_color" class="ri" type="text" placeholder="Ej: Negro 128GB"></div>
+        <div class="r-field"><label>IMEI (opcional)</label><input id="sc_imei" class="ri" type="text" placeholder="15 dígitos"></div>
+        <div class="r-field"><label>Estado estético</label>
+          <select id="sc_estado" class="ri">
+            <option value="A+">Grado A+ (como nuevo)</option>
+            <option value="A" selected>Grado A (muy bueno)</option>
+            <option value="A-">Grado A- (bueno)</option>
+            <option value="B+">Grado B+ (algunos detalles)</option>
+            <option value="B">Grado B (uso visible)</option>
+          </select>
+        </div>
+        <div class="r-field"><label>Precio de compra (ARS) *</label><input id="sc_compra" class="ri" type="number" min="0" step="1000" placeholder="0" oninput="calcStockGanancia()"></div>
+        <div class="r-field"><label>Precio de venta (ARS) *</label><input id="sc_venta" class="ri" type="number" min="0" step="1000" placeholder="0" oninput="calcStockGanancia()"></div>
+        <div class="r-field" style="grid-column:span 2;">
+          <label>Batería al ingreso</label>
+          <input id="sc_bateria" class="ri" type="text" placeholder="Ej: 87%">
+        </div>
+      </div>
+
+      <!-- Reparaciones realizadas -->
+      <div style="margin-bottom:16px;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-secondary);margin-bottom:8px;">Reparaciones / Gastos adicionales</div>
+        <div id="sc_reps_list" style="margin-bottom:8px;"></div>
+        <div style="display:flex;gap:8px;">
+          <input id="sc_rep_desc" class="ri" type="text" placeholder="Descripción (ej: Cambio batería)" style="flex:1;">
+          <input id="sc_rep_costo" class="ri" type="number" min="0" placeholder="Costo ARS" style="width:130px;">
+          <button onclick="addStockRep()" style="background:var(--accent);color:white;border:none;border-radius:9px;padding:8px 14px;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">+ Agregar</button>
+        </div>
+      </div>
+
+      <!-- Totales live -->
+      <div style="background:var(--text-primary);border-radius:12px;padding:14px 16px;margin-bottom:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;" id="stockLiveTotals">
+        <div><div style="font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Costo total</div><div style="font-size:16px;font-weight:700;color:white;" id="slt_costo">$0</div></div>
+        <div><div style="font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Precio venta</div><div style="font-size:16px;font-weight:700;color:white;" id="slt_venta">$0</div></div>
+        <div><div style="font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Ganancia</div><div style="font-size:16px;font-weight:700;color:#34d058;" id="slt_gan">$0</div></div>
+      </div>
+
+      <div style="display:flex;gap:10px;">
+        <button class="btn-primary" onclick="guardarStockCel()">Guardar Equipo</button>
+        <button class="btn-outline-sm" onclick="closeModal('modal-stock-cel')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TABLA COMPLETA ===== -->
+  <div class="tab-pane" id="tab-tabla">
+    <div class="page-header">
+      <h1 class="page-title">Lista Completa</h1>
+      <p class="page-sub">Todos los modelos y reparaciones con costos y precios sugeridos</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title" id="tablaCount">—</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <div class="search-wrap">
+            <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input class="search-input" type="text" id="tablaSearch" placeholder="Buscar…" oninput="renderTabla()">
+          </div>
+          <select class="model-select" id="tablaModelFilter" onchange="renderTabla()">
+            <option value="">Todos los modelos</option>
+          </select>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Modelo</th>
+              <th>Reparación</th>
+              <th>Repuesto USD</th>
+              <th>M. de Obra USD</th>
+              <th>Costo Total</th>
+              <th>Precio Sugerido</th>
+              <th>Ganancia</th>
+              <th>Demora</th>
+            </tr>
+          </thead>
+          <tbody id="tablaBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PROVEEDORES ===== -->
+  <div class="tab-pane" id="tab-proveedores">
+    <div class="page-header">
+      <h1 class="page-title">Precios Proveedor</h1>
+      <p class="page-sub">Ampsentrix · Accesorios Apple · Tabla de precios por volumen</p>
+    </div>
+    <div class="prov-grid" id="provGrid"></div>
+  </div>
+
+  <!-- ===== DÓLAR ===== -->
+  <div class="tab-pane" id="tab-dolar">
+    <div class="page-header">
+      <h1 class="page-title">Cotizaciones del Dólar</h1>
+      <p class="page-sub">Datos en tiempo real · Fuente: DolarHoy.com via DolarApi</p>
+    </div>
+    <div class="dolar-cards" id="dolarCards">
+      <div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-tertiary); font-size:14px;">Cargando cotizaciones…</div>
+    </div>
+    <div id="dolarTs" style="font-size:11px;color:var(--text-tertiary);text-align:right;margin-top:-16px;"></div>
+  </div>
+
+
+  <!-- ===== REMITOS ===== -->
+  <div class="tab-pane" id="tab-remito">
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:28px;">
+      <div>
+        <h1 class="page-title">Remitos</h1>
+        <p class="page-sub">Generá el comprobante de ingreso del equipo</p>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="limpiarRemito()" style="background:var(--surface);border:1px solid var(--border-strong);color:var(--text-primary);border-radius:10px;padding:9px 18px;font-family:var(--font);font-size:13px;font-weight:500;cursor:pointer;">Nueva orden</button>
+        <button onclick="imprimirRemito()" style="background:var(--text-primary);color:white;border:none;border-radius:10px;padding:9px 18px;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Imprimir / Guardar PDF
+        </button>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;" class="rg2">
+      <div class="rc">
+        <div class="rc-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Cliente</div>
+        <div class="rf2">
+          <div class="rf"><label>Nombre y Apellido *</label><input id="r_nombre" class="ri" type="text" placeholder="Ej: Juan García"></div>
+          <div class="rf"><label>Teléfono</label><input id="r_tel" class="ri" type="text" placeholder="+54 9 2324 000000"></div>
+        </div>
+      </div>
+      <div class="rc">
+        <div class="rc-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg> Equipo</div>
+        <div class="rf2">
+          <div class="rf"><label>Modelo iPhone *</label><select id="r_modelo" class="ri"><option value="">Seleccionar…</option></select></div>
+          <div class="rf"><label>Color / Capacidad</label><input id="r_color" class="ri" type="text" placeholder="Ej: Negro 128GB"></div>
+        </div>
+        <div class="rf2" style="margin-top:10px;">
+          <div class="rf"><label>PIN / Contraseña</label><input id="r_pin" class="ri" type="text" placeholder="PIN o Sin contraseña"></div>
+          <div class="rf"><label>Batería al ingreso</label><input id="r_bat" class="ri" type="text" placeholder="Ej: 78%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;" class="rg2">
+      <div class="rc">
+        <div class="rc-title"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> Servicio & Fechas</div>
+        <div class="rf"><label>Servicio / Reparación realizada *</label><textarea id="r_servicio" class="ri" rows="3" placeholder="Ej: Cambio de batería Ampsentrix Plus, cambio de pantalla JCID…"></textarea></div>
+        <div class="rf2" style="margin-top:10px;">
+          <div class="rf"><label>Fecha de ingreso</label><input id="r_fecha" class="ri" type="date"></div>
+          <div class="rf"><label>Total cobrado (ARS)</label><input id="r_total" class="ri" type="number" min="0" step="100" placeholder="0"></div>
+        </div>
+        <div class="rf" style="margin-top:10px;"><label>Observaciones generales</label><textarea id="r_obs" class="ri" rows="2" placeholder="Información adicional para el remito…"></textarea></div>
+      </div>
+
+      <div class="rc">
+        <div class="rc-title" style="margin-bottom:12px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Check-in del Equipo <span style="font-size:11px;font-weight:400;color:var(--text-tertiary);">— marcá lo que ya falla al ingresar</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;">
+          <label class="rck"><input type="checkbox" id="ci_pantalla"><span>Pantalla rota / rayada</span></label>
+          <label class="rck"><input type="checkbox" id="ci_carcasa"><span>Carcasa dañada</span></label>
+          <label class="rck"><input type="checkbox" id="ci_bateria"><span>Batería degradada</span></label>
+          <label class="rck"><input type="checkbox" id="ci_camara"><span>Cámara con falla</span></label>
+          <label class="rck"><input type="checkbox" id="ci_carga"><span>Pin de carga flojo</span></label>
+          <label class="rck"><input type="checkbox" id="ci_bocina"><span>Parlante / bocina falla</span></label>
+          <label class="rck"><input type="checkbox" id="ci_micro"><span>Micrófono falla</span></label>
+          <label class="rck"><input type="checkbox" id="ci_faceid"><span>Face ID / Touch ID falla</span></label>
+          <label class="rck"><input type="checkbox" id="ci_wifi"><span>Wi-Fi / Bluetooth falla</span></label>
+          <label class="rck"><input type="checkbox" id="ci_señal"><span>Sin señal / Sin SIM</span></label>
+          <label class="rck"><input type="checkbox" id="ci_boton"><span>Botón roto</span></label>
+          <label class="rck"><input type="checkbox" id="ci_vidrio"><span>Vidrio trasero roto</span></label>
+        </div>
+        <div class="rf" style="margin-top:12px;"><label>Observaciones adicionales al ingreso</label><textarea id="r_obs_checkin" class="ri" rows="2" placeholder="Ej: Ingresa sin caja, con micro roto de antes…"></textarea></div>
+      </div>
+    </div>
+
+    <!-- Preview del remito -->
+    <div style="border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm);margin-bottom:32px;">
+      <div style="background:var(--surface);padding:12px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:12px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.4px;">Vista previa del remito</span>
+        <button onclick="renderPreview()" style="background:var(--accent);color:white;border:none;border-radius:7px;padding:5px 14px;font-family:var(--font);font-size:12px;font-weight:500;cursor:pointer;">Actualizar</button>
+      </div>
+      <div id="remitoPreview" style="background:#fff;padding:28px 32px;"></div>
+    </div>
+  </div>
+
+
+  <!-- ===== iPHONES USADOS ===== -->
+  <div class="tab-pane" id="tab-usados">
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:28px;">
+      <div>
+        <h1 class="page-title">iPhones Usados</h1>
+        <p class="page-sub">Precios de mercado · Regla 20% para compra rentable</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;background:var(--surface);border-radius:10px;padding:8px 14px;">
+        <span style="font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.4px;">Margen compra:</span>
+        <select id="margenSelect" onchange="renderUsados()" style="border:none;background:transparent;font-family:var(--font);font-size:13px;font-weight:600;color:var(--accent);outline:none;cursor:pointer;">
+          <option value="0.20">20%</option>
+          <option value="0.25">25%</option>
+          <option value="0.30">30%</option>
+          <option value="0.15">15%</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Buscador -->
+    <div style="margin-bottom:16px;">
+      <div class="search-wrap" style="max-width:320px;">
+        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input class="search-input" type="text" id="usadosSearch" placeholder="Buscar modelo…" oninput="renderUsados()">
+      </div>
+    </div>
+
+    <!-- Cards de precios -->
+    <div id="usadosGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;"></div>
+
+    <!-- Nota -->
+    <div style="margin-top:20px;background:var(--surface);border-radius:12px;padding:14px 16px;font-size:12px;color:var(--text-secondary);line-height:1.6;">
+      <strong style="color:var(--text-primary);">Nota:</strong> Los precios de venta son referencias del mercado argentino (MercadoLibre, HeyShop, GrupoTec, CelluMarket) a marzo 2026 con dólar blue ~$1.300. 
+      El precio de compra se calcula aplicando el margen seleccionado (por defecto 20%) sobre el precio de venta: <strong>Compra = Venta × (1 − margen)</strong>. 
+      Los precios varían según estado del equipo, capacidad y batería. Actualizá el tipo de cambio arriba para recalcular.
+    </div>
+  </div>
+
+</main>
+
+<script>
+const RAW = {"modelos": {"iPhone 8 / SE 2020": [{"r": "Software", "mo": 10, "costo": 0, "obs": "Se pierde toda la información. Se necesita iCloud y clave de pantalla", "d": "30 min"}, {"r": "Mantenimiento", "mo": 10, "costo": 0, "obs": "Se hace cuando solo hubo que limpiar, ajustar o conectar", "d": "30 min"}, {"r": "Limpieza", "mo": 4, "costo": 0, "obs": "Limpieza superficial", "d": "30 min"}, {"r": "Módulo", "mo": 12, "costo": 14, "obs": "", "d": "30 min (con turno)"}, {"r": "Batería", "mo": 12, "costo": 10, "obs": "", "d": "30 min (con turno)"}, {"r": "Tapa Vidrio", "mo": 20, "costo": 3, "obs": "Marco roto o doblado: se cambia carcasa completa", "d": "3/4 hs"}, {"r": "Carcasa", "mo": 20, "costo": 21, "obs": "Opcional: puede elegir colores", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 12, "costo": 3, "obs": "No repara la cámara ni saca manchas (solo estético)", "d": "30 min (con turno)"}, {"r": "Cámara Trasera", "mo": 12, "costo": 7, "obs": "", "d": "30 min (con turno)"}, {"r": "Cámara Frontal", "mo": 12, "costo": 6, "obs": "", "d": "60 min (con turno)"}, {"r": "Parlante Auricular", "mo": 12, "costo": 2, "obs": "", "d": "30 min (con turno)"}, {"r": "Parlante Principal", "mo": 12, "costo": 2, "obs": "", "d": "30 min (con turno)"}, {"r": "Flex de Carga", "mo": 16, "costo": 6, "obs": "", "d": "60 min (con turno)"}, {"r": "Placa", "mo": 60, "costo": 5, "obs": "Riesgo de apagarse permanente y perder información", "d": "3-5 días"}], "iPhone 8 Plus": [{"r": "Software", "mo": 10, "costo": 0, "obs": "Se pierde toda la información. Se necesita iCloud y clave de pantalla", "d": "30 min"}, {"r": "Mantenimiento", "mo": 10, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Limpieza", "mo": 4, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo", "mo": 12, "costo": 15, "obs": "", "d": "30 min (con turno)"}, {"r": "Batería", "mo": 12, "costo": 12, "obs": "", "d": "30 min (con turno)"}, {"r": "Tapa Vidrio", "mo": 20, "costo": 4, "obs": "Marco roto o doblado: se cambia carcasa completa", "d": "3/4 hs"}, {"r": "Carcasa", "mo": 20, "costo": 23, "obs": "Opcional: puede elegir colores", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 12, "costo": 3, "obs": "No repara la cámara ni saca manchas (solo estético)", "d": "30 min (con turno)"}, {"r": "Cámara Trasera", "mo": 12, "costo": 17, "obs": "", "d": "30 min (con turno)"}, {"r": "Cámara Frontal", "mo": 12, "costo": 6, "obs": "", "d": "60 min (con turno)"}, {"r": "Parlante Auricular", "mo": 12, "costo": 2, "obs": "", "d": "30 min (con turno)"}, {"r": "Parlante Principal", "mo": 12, "costo": 3, "obs": "", "d": "30 min (con turno)"}, {"r": "Flex de Carga", "mo": 16, "costo": 6, "obs": "", "d": "60 min (con turno)"}, {"r": "Placa", "mo": 60, "costo": 5, "obs": "Riesgo de apagarse permanente y perder información", "d": "3-5 días"}], "iPhone X": [{"r": "Software", "mo": 10, "costo": 0, "obs": "Se pierde toda la información", "d": "30 min"}, {"r": "Mantenimiento", "mo": 10, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Limpieza", "mo": 4, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo", "mo": 12, "costo": 60, "obs": "Se necesita la pantalla original", "d": "30 min (con turno)"}, {"r": "Batería", "mo": 12, "costo": 13, "obs": "", "d": "30 min (con turno)"}, {"r": "Tapa Vidrio", "mo": 20, "costo": 4, "obs": "Marco roto o doblado: se cambia carcasa completa", "d": "3/4 hs"}, {"r": "Carcasa", "mo": 24, "costo": 17, "obs": "Opcional: puede elegir colores", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 12, "costo": 3, "obs": "No repara la cámara (solo estético)", "d": "60 min (con turno)"}, {"r": "Cámara Trasera", "mo": 12, "costo": 14, "obs": "", "d": "30 min (con turno)"}, {"r": "Cámara Frontal", "mo": 20, "costo": 6, "obs": "", "d": "60 min (con turno)"}, {"r": "Parlante Auricular", "mo": 12, "costo": 2, "obs": "", "d": "30 min (con turno)"}, {"r": "Parlante Principal", "mo": 12, "costo": 3, "obs": "", "d": "30 min (con turno)"}, {"r": "Sensor de Proximidad", "mo": 16, "costo": 3, "obs": "", "d": "60 min (con turno)"}, {"r": "Flex de Carga", "mo": 16, "costo": 6, "obs": "", "d": "60 min (con turno)"}, {"r": "Placa", "mo": 50, "costo": 5, "obs": "Riesgo de apagarse permanente y perder información", "d": "3-5 días"}], "iPhone XS": [{"r": "Software", "mo": 10, "costo": 0, "obs": "Se pierde toda la información", "d": "30 min"}, {"r": "Mantenimiento", "mo": 10, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Limpieza", "mo": 4, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo", "mo": 12, "costo": 57, "obs": "Se necesita la pantalla original", "d": "30 min (con turno)"}, {"r": "Batería sin mensaje", "mo": 14, "costo": 16, "obs": "Se necesita batería original y se borra información", "d": "60 min (con turno)"}, {"r": "Batería pieza desconocida", "mo": 10, "costo": 18, "obs": "Se necesita la batería original", "d": "30 min (con turno)"}, {"r": "Tapa Vidrio", "mo": 24, "costo": 4, "obs": "Marco roto o doblado: se cambia carcasa completa", "d": "3/4 hs"}, {"r": "Carcasa", "mo": 28, "costo": 23, "obs": "Opcional: puede elegir colores", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 12, "costo": 3, "obs": "No repara la cámara (solo estético)", "d": "60 min (con turno)"}, {"r": "Cámara Trasera", "mo": 12, "costo": 32, "obs": "Figura 'original' en Piezas y Servicios", "d": "30 min (con turno)"}, {"r": "Cámara Frontal", "mo": 16, "costo": 9, "obs": "", "d": "60 min (con turno)"}, {"r": "Parlante Auricular", "mo": 12, "costo": 7, "obs": "", "d": "30 min (con turno)"}, {"r": "Parlante Principal", "mo": 12, "costo": 3, "obs": "", "d": "30 min (con turno)"}, {"r": "Flex de Carga", "mo": 16, "costo": 6, "obs": "", "d": "60 min (con turno)"}, {"r": "Placa", "mo": 50, "costo": 5, "obs": "Riesgo de apagarse permanente y perder información", "d": "3-5 días"}], "iPhone XS Max": [{"r": "Software", "mo": 10, "costo": 0, "obs": "Se pierde toda la información", "d": "30 min"}, {"r": "Mantenimiento", "mo": 10, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Limpieza", "mo": 4, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo", "mo": 12, "costo": 56, "obs": "Se necesita la pantalla original", "d": "30 min (con turno)"}, {"r": "Batería sin mensaje", "mo": 14, "costo": 16, "obs": "Se necesita batería original y se borra información", "d": "60 min (con turno)"}, {"r": "Batería pieza desconocida", "mo": 10, "costo": 18, "obs": "", "d": "30 min (con turno)"}, {"r": "Tapa Vidrio", "mo": 24, "costo": 5, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa", "mo": 28, "costo": 24, "obs": "Opcional: puede elegir colores", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 12, "costo": 3, "obs": "No repara la cámara (solo estético)", "d": "60 min"}, {"r": "Cámara Trasera", "mo": 12, "costo": 32, "obs": "Figura 'original' en Piezas y Servicios", "d": "30 min (con turno)"}, {"r": "Cámara Frontal", "mo": 16, "costo": 9, "obs": "", "d": "60 min (con turno)"}, {"r": "Parlante Auricular", "mo": 12, "costo": 2, "obs": "", "d": "30 min (con turno)"}, {"r": "Parlante Principal", "mo": 12, "costo": 3, "obs": "", "d": "30 min (con turno)"}, {"r": "Flex de Carga", "mo": 16, "costo": 6, "obs": "", "d": "60 min (con turno)"}, {"r": "Placa", "mo": 50, "costo": 5, "obs": "Riesgo de apagarse permanente y perder información", "d": "3-5 días"}], "iPhone XR": [{"r": "Software", "mo": 10, "costo": 0, "obs": "Se pierde toda la información", "d": "30 min"}, {"r": "Mantenimiento", "mo": 10, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Limpieza", "mo": 4, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo", "mo": 12, "costo": 33, "obs": "Se necesita la pantalla original", "d": "30 min (con turno)"}, {"r": "Batería sin mensaje", "mo": 14, "costo": 12, "obs": "Se necesita batería original y se borra información", "d": "60 min (con turno)"}, {"r": "Batería pieza desconocida", "mo": 10, "costo": 14, "obs": "", "d": "30 min (con turno)"}, {"r": "Tapa Vidrio", "mo": 24, "costo": 4, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa", "mo": 28, "costo": 18, "obs": "Opcional: puede elegir colores", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 12, "costo": 3, "obs": "No repara la cámara (solo estético)", "d": "60 min"}, {"r": "Cámara Trasera", "mo": 12, "costo": 20, "obs": "Figura 'original' en Piezas y Servicios", "d": "30 min (con turno)"}, {"r": "Cámara Frontal", "mo": 16, "costo": 7, "obs": "", "d": "60 min (con turno)"}, {"r": "Parlante Auricular", "mo": 12, "costo": 2, "obs": "", "d": "30 min (con turno)"}, {"r": "Parlante Principal", "mo": 12, "costo": 3, "obs": "", "d": "30 min (con turno)"}, {"r": "Flex de Carga", "mo": 16, "costo": 5, "obs": "", "d": "60 min (con turno)"}, {"r": "Placa", "mo": 50, "costo": 5, "obs": "Riesgo de apagarse permanente y perder información", "d": "3-5 días"}], "iPhone 11": [{"r": "Software", "mo": 12, "costo": 0, "obs": "Se pierde toda la información", "d": "30 min"}, {"r": "Mantenimiento", "mo": 12, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Limpieza", "mo": 6, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo Réplica Apto IC (sin mensaje)", "mo": 20, "costo": 30, "obs": "Se necesita la pantalla original", "d": "30 min (con turno)"}, {"r": "Batería sin mensaje", "mo": 14, "costo": 15, "obs": "Se necesita batería original y se borra información", "d": "60 min (con turno)"}, {"r": "Batería pieza desconocida", "mo": 10, "costo": 18, "obs": "", "d": "30 min (con turno)"}, {"r": "Tapa Vidrio", "mo": 28, "costo": 5, "obs": "Marco roto: se cambia carcasa completa", "d": "3/4 hs"}, {"r": "Carcasa", "mo": 36, "costo": 17, "obs": "Opcional: puede elegir colores", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 20, "costo": 2, "obs": "No repara la cámara (solo estético)", "d": "60 min"}, {"r": "Cámara Trasera", "mo": 16, "costo": 18, "obs": "Figura 'original' en Piezas y Servicios", "d": "30 min (con turno)"}, {"r": "Cámara Frontal", "mo": 20, "costo": 9, "obs": "", "d": "60 min (con turno)"}, {"r": "Parlante Auricular", "mo": 20, "costo": 4, "obs": "", "d": "30 min (con turno)"}, {"r": "Parlante Principal", "mo": 20, "costo": 3, "obs": "", "d": "30 min (con turno)"}, {"r": "Flex de Carga", "mo": 24, "costo": 14, "obs": "", "d": "60 min (con turno)"}, {"r": "Placa", "mo": 70, "costo": 10, "obs": "Riesgo de apagarse permanente y perder información", "d": "3-5 días"}, {"r": "SWAP", "mo": 115, "costo": 0, "obs": "Riesgo de perder Face ID", "d": "60 min (con turno)"}], "iPhone 11 Pro": [{"r": "Software", "mo": 12, "costo": 0, "obs": "Se pierde toda la información", "d": "30 min"}, {"r": "Mantenimiento", "mo": 12, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Limpieza", "mo": 6, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo Réplica Apto IC", "mo": 20, "costo": 72, "obs": "Se necesita la pantalla original", "d": "30 min (con turno)"}, {"r": "Batería sin mensaje", "mo": 14, "costo": 20, "obs": "Se necesita batería original", "d": "60 min (con turno)"}, {"r": "Batería pieza desconocida", "mo": 10, "costo": 21, "obs": "", "d": "30 min (con turno)"}, {"r": "Tapa Vidrio", "mo": 28, "costo": 8, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa", "mo": 36, "costo": 40, "obs": "Opcional: puede elegir colores", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 20, "costo": 2, "obs": "No repara la cámara (solo estético)", "d": "60 min"}, {"r": "Cámara Trasera", "mo": 16, "costo": 60, "obs": "Figura 'original' en Piezas y Servicios", "d": "30 min (con turno)"}, {"r": "Cámara Frontal", "mo": 20, "costo": 14, "obs": "", "d": "60 min (con turno)"}, {"r": "Parlante Auricular", "mo": 20, "costo": 6, "obs": "", "d": "30 min (con turno)"}, {"r": "Parlante Principal", "mo": 20, "costo": 5, "obs": "", "d": "30 min (con turno)"}, {"r": "Flex de Carga", "mo": 24, "costo": 37, "obs": "", "d": "60 min (con turno)"}, {"r": "Placa", "mo": 70, "costo": 10, "obs": "Riesgo de apagarse permanente y perder información", "d": "3-5 días"}, {"r": "SWAP", "mo": 115, "costo": 0, "obs": "Riesgo de perder Face ID", "d": "60 min (con turno)"}], "iPhone 11 Pro Max": [{"r": "Software", "mo": 12, "costo": 0, "obs": "Se pierde toda la información", "d": "30 min"}, {"r": "Mantenimiento", "mo": 12, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Limpieza", "mo": 6, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo Réplica Apto IC", "mo": 20, "costo": 60, "obs": "Se necesita la pantalla original", "d": "30 min (con turno)"}, {"r": "Batería sin mensaje", "mo": 14, "costo": 22, "obs": "Se necesita batería original", "d": "60 min (con turno)"}, {"r": "Batería pieza desconocida", "mo": 10, "costo": 24, "obs": "", "d": "60 min (con turno)"}, {"r": "Tapa Vidrio", "mo": 28, "costo": 8, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa", "mo": 36, "costo": 37, "obs": "Opcional: puede elegir colores", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 20, "costo": 2, "obs": "No repara la cámara (solo estético)", "d": "60 min"}, {"r": "Cámara Trasera", "mo": 16, "costo": 60, "obs": "Figura 'original' en Piezas y Servicios", "d": "30 min (con turno)"}, {"r": "Cámara Frontal", "mo": 20, "costo": 12, "obs": "", "d": "60 min (con turno)"}, {"r": "Parlante Auricular", "mo": 20, "costo": 10, "obs": "", "d": "30 min (con turno)"}, {"r": "Parlante Principal", "mo": 20, "costo": 8, "obs": "", "d": "30 min (con turno)"}, {"r": "Flex de Carga", "mo": 24, "costo": 37, "obs": "", "d": "60 min (con turno)"}, {"r": "Placa", "mo": 70, "costo": 10, "obs": "Riesgo de apagarse permanente y perder información", "d": "3-5 días"}, {"r": "SWAP", "mo": 115, "costo": 0, "obs": "Riesgo de perder Face ID", "d": "60 min (con turno)"}], "iPhone 12": [{"r": "Software", "mo": 12, "costo": 0, "obs": "Se pierde toda la información", "d": "30 min"}, {"r": "Mantenimiento", "mo": 12, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Limpieza", "mo": 5, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo Original (sin mensaje)", "mo": 0, "costo": 80, "obs": "Se necesita la pantalla original", "d": "—"}, {"r": "Módulo JCID Diagnóstico", "mo": 16, "costo": 80, "obs": "Figura 'original segunda mano' en Piezas y Servicios", "d": "30 min (con turno)"}, {"r": "Módulo Réplica Apto IC", "mo": 24, "costo": 75, "obs": "Se necesita la pantalla original", "d": "60 min (con turno)"}, {"r": "Módulo InCell sin IC", "mo": 0, "costo": 31, "obs": "Pieza desconocida", "d": "—"}, {"r": "Remanufactura", "mo": 50, "costo": 4.5, "obs": "Riesgo de que se tenga que cambiar la pantalla completa", "d": "60 min (con turno)"}, {"r": "Batería s/Flex sin historial", "mo": 22, "costo": 15, "obs": "Se necesita batería original y se borra información", "d": "60 min (con turno)"}, {"r": "Batería c/Flex con historial", "mo": 16, "costo": 22, "obs": "Figura 'original segunda mano' en Piezas y Servicios", "d": "30 min (con turno)"}, {"r": "Transplante EPROM batería", "mo": 46, "costo": 31, "obs": "Se necesita la batería original", "d": "60 min (con turno)"}, {"r": "Tapa Vidrio Réplica", "mo": 32, "costo": 6, "obs": "Marco roto: se cambia carcasa completa", "d": "3/4 hs"}, {"r": "Carcasa Original", "mo": 40, "costo": 20, "obs": "Opcional: puede elegir colores", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 24, "costo": 2, "obs": "No repara la cámara (solo estético)", "d": "60 min"}, {"r": "Cámara Trasera Original Diagnóstico", "mo": 20, "costo": 31, "obs": "Figura 'original' en Piezas y Servicios", "d": "30 min (con turno)"}, {"r": "Cámara Frontal", "mo": 24, "costo": 9, "obs": "Riesgo de perder Face ID", "d": "60 min (con turno)"}, {"r": "Face ID Tag-On", "mo": 28, "costo": 19, "obs": "", "d": "60 min (con turno)"}, {"r": "Parlante Auricular", "mo": 20, "costo": 15, "obs": "", "d": "30 min (con turno)"}, {"r": "Parlante Principal", "mo": 20, "costo": 4, "obs": "", "d": "30 min (con turno)"}, {"r": "Flex de Carga", "mo": 28, "costo": 14, "obs": "", "d": "60 min (con turno)"}, {"r": "Sensor de Proximidad", "mo": 28, "costo": 18, "obs": "Riesgo de perder Face ID", "d": "60 min (con turno)"}, {"r": "Enc. Vol. Carga Inalámbrica", "mo": 28, "costo": 14, "obs": "", "d": "60 min (con turno)"}, {"r": "Placa", "mo": 80, "costo": 10, "obs": "Riesgo de apagarse permanente y perder información", "d": "3-5 días"}, {"r": "SWAP", "mo": 140, "costo": 0, "obs": "", "d": "—"}], "iPhone 12 Mini": [{"r": "Software", "mo": 12, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Mantenimiento", "mo": 12, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo Réplica Apto IC", "mo": 24, "costo": 60, "obs": "", "d": "60 min"}, {"r": "Batería sin historial", "mo": 22, "costo": 18, "obs": "", "d": "60 min"}, {"r": "Batería con historial", "mo": 16, "costo": 20, "obs": "", "d": "30 min"}, {"r": "Transplante EPROM batería", "mo": 46, "costo": 31, "obs": "", "d": "60 min"}, {"r": "Tapa Vidrio Réplica", "mo": 32, "costo": 4, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa Original", "mo": 40, "costo": 27, "obs": "", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 24, "costo": 48, "obs": "Solo estético", "d": "60 min"}, {"r": "Cámara Trasera Original", "mo": 20, "costo": 50, "obs": "", "d": "30 min"}, {"r": "Cámara Frontal", "mo": 24, "costo": 9, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Face ID Tag-On", "mo": 28, "costo": 15, "obs": "", "d": "60 min"}, {"r": "Parlante Auricular", "mo": 20, "costo": 7, "obs": "", "d": "30 min"}, {"r": "Parlante Principal", "mo": 20, "costo": 7, "obs": "", "d": "30 min"}, {"r": "Flex de Carga", "mo": 28, "costo": 11, "obs": "", "d": "60 min"}, {"r": "Sensor de Proximidad", "mo": 28, "costo": 6, "obs": "", "d": "60 min"}, {"r": "Enc. Vol. Carga Inalámbrica", "mo": 28, "costo": 7, "obs": "", "d": "60 min"}, {"r": "Placa", "mo": 80, "costo": 10, "obs": "Riesgo de apagarse permanente", "d": "3-5 días"}, {"r": "SWAP", "mo": 140, "costo": 0, "obs": "", "d": "—"}], "iPhone 12 Pro": [{"r": "Software", "mo": 14, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Mantenimiento", "mo": 14, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo JCID Diagnóstico", "mo": 20, "costo": 80, "obs": "Figura 'original segunda mano'", "d": "30 min"}, {"r": "Módulo Réplica Apto IC", "mo": 28, "costo": 75, "obs": "", "d": "60 min"}, {"r": "Remanufactura", "mo": 60, "costo": 4.5, "obs": "", "d": "60 min"}, {"r": "Batería sin historial", "mo": 26, "costo": 15, "obs": "", "d": "60 min"}, {"r": "Batería con historial", "mo": 20, "costo": 22, "obs": "", "d": "30 min"}, {"r": "Transplante EPROM batería", "mo": 52, "costo": 42, "obs": "", "d": "60 min"}, {"r": "Tapa Vidrio Réplica", "mo": 36, "costo": 6, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa Original", "mo": 40, "costo": 45, "obs": "", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 28, "costo": 3, "obs": "Solo estético", "d": "60 min"}, {"r": "Cámara Trasera Original", "mo": 24, "costo": 105, "obs": "", "d": "30 min"}, {"r": "Cámara Frontal", "mo": 28, "costo": 9, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Face ID Tag-On", "mo": 28, "costo": 19, "obs": "", "d": "60 min"}, {"r": "Parlante Auricular", "mo": 24, "costo": 15, "obs": "", "d": "30 min"}, {"r": "Parlante Principal", "mo": 24, "costo": 4, "obs": "", "d": "30 min"}, {"r": "Flex de Carga", "mo": 32, "costo": 9, "obs": "", "d": "60 min"}, {"r": "Sensor de Proximidad", "mo": 32, "costo": 18, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Enc. Vol. Carga Inalámbrica", "mo": 32, "costo": 14, "obs": "", "d": "60 min"}, {"r": "Placa", "mo": 84, "costo": 10, "obs": "Riesgo de apagarse permanente", "d": "3-5 días"}, {"r": "SWAP", "mo": 140, "costo": 0, "obs": "", "d": "—"}], "iPhone 12 Pro Max": [{"r": "Software", "mo": 14, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Mantenimiento", "mo": 14, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo JCID Diagnóstico", "mo": 20, "costo": 100, "obs": "", "d": "30 min"}, {"r": "Módulo Réplica Apto IC", "mo": 28, "costo": 90, "obs": "", "d": "60 min"}, {"r": "Módulo InCell sin IC", "mo": 0, "costo": 43, "obs": "", "d": "—"}, {"r": "Remanufactura", "mo": 60, "costo": 5, "obs": "", "d": "60 min"}, {"r": "Batería sin historial", "mo": 26, "costo": 22, "obs": "", "d": "60 min"}, {"r": "Batería con historial", "mo": 20, "costo": 29, "obs": "", "d": "30 min"}, {"r": "Transplante EPROM batería", "mo": 52, "costo": 36, "obs": "", "d": "60 min"}, {"r": "Tapa Vidrio Réplica", "mo": 36, "costo": 7, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa Original", "mo": 44, "costo": 45, "obs": "", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 28, "costo": 3, "obs": "Solo estético", "d": "60 min"}, {"r": "Cámara Trasera Original", "mo": 24, "costo": 95, "obs": "", "d": "30 min"}, {"r": "Cámara Frontal", "mo": 28, "costo": 14, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Face ID Tag-On", "mo": 28, "costo": 19, "obs": "", "d": "60 min"}, {"r": "Parlante Auricular", "mo": 24, "costo": 10, "obs": "", "d": "30 min"}, {"r": "Parlante Principal", "mo": 24, "costo": 14, "obs": "", "d": "30 min"}, {"r": "Flex de Carga", "mo": 32, "costo": 14, "obs": "", "d": "60 min"}, {"r": "Sensor de Proximidad", "mo": 32, "costo": 18, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Enc. Vol. Carga Inalámbrica", "mo": 32, "costo": 15, "obs": "", "d": "60 min"}, {"r": "Placa", "mo": 84, "costo": 10, "obs": "Riesgo de apagarse permanente", "d": "3-5 días"}, {"r": "SWAP", "mo": 154, "costo": 0, "obs": "", "d": "—"}], "iPhone 13": [{"r": "Software", "mo": 14, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Mantenimiento", "mo": 14, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo JCID Diagnóstico", "mo": 20, "costo": 85, "obs": "", "d": "30 min"}, {"r": "Módulo Réplica Apto IC", "mo": 28, "costo": 80, "obs": "", "d": "60 min"}, {"r": "Módulo InCell sin IC", "mo": 0, "costo": 35, "obs": "", "d": "—"}, {"r": "Remanufactura", "mo": 60, "costo": 4.5, "obs": "", "d": "60 min"}, {"r": "Batería sin historial", "mo": 26, "costo": 17, "obs": "", "d": "60 min"}, {"r": "Batería con historial", "mo": 20, "costo": 25, "obs": "", "d": "30 min"}, {"r": "Transplante EPROM batería", "mo": 52, "costo": 39, "obs": "", "d": "60 min"}, {"r": "Tapa Vidrio Réplica", "mo": 36, "costo": 6, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa Original", "mo": 44, "costo": 23, "obs": "", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 28, "costo": 2, "obs": "Solo estético", "d": "60 min"}, {"r": "Cámara Trasera Original", "mo": 24, "costo": 34, "obs": "", "d": "30 min"}, {"r": "Cámara Trasera + Tag-On JCID", "mo": 0, "costo": 47, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Cámara Frontal", "mo": 28, "costo": 17, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Parlante Auricular", "mo": 24, "costo": 14, "obs": "", "d": "30 min"}, {"r": "Parlante Principal", "mo": 24, "costo": 7, "obs": "", "d": "30 min"}, {"r": "Flex de Carga", "mo": 32, "costo": 12, "obs": "", "d": "60 min"}, {"r": "Sensor de Proximidad", "mo": 32, "costo": 4, "obs": "", "d": "30 min"}, {"r": "Enc. Vol. Carga Inalámbrica", "mo": 32, "costo": 19, "obs": "", "d": "60 min"}, {"r": "Placa", "mo": 100, "costo": 10, "obs": "Riesgo de apagarse permanente", "d": "3-5 días"}, {"r": "SWAP", "mo": 169.4, "costo": 0, "obs": "", "d": "60 min"}], "iPhone 13 Mini": [{"r": "Software", "mo": 14, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Mantenimiento", "mo": 14, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo Réplica Apto IC", "mo": 28, "costo": 100, "obs": "", "d": "60 min"}, {"r": "Batería sin historial", "mo": 26, "costo": 15, "obs": "", "d": "60 min"}, {"r": "Batería con historial", "mo": 20, "costo": 23, "obs": "", "d": "30 min"}, {"r": "Transplante EPROM batería", "mo": 52, "costo": 28, "obs": "", "d": "60 min"}, {"r": "Tapa Vidrio Réplica", "mo": 36, "costo": 5, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa Original", "mo": 44, "costo": 40, "obs": "", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 28, "costo": 2, "obs": "Solo estético", "d": "60 min"}, {"r": "Cámara Trasera Original", "mo": 24, "costo": 34, "obs": "", "d": "30 min"}, {"r": "Cámara Frontal", "mo": 28, "costo": 17, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Parlante Auricular", "mo": 28, "costo": 16, "obs": "", "d": "30 min"}, {"r": "Parlante Principal", "mo": 28, "costo": 10, "obs": "", "d": "30 min"}, {"r": "Flex de Carga", "mo": 32, "costo": 18, "obs": "", "d": "60 min"}, {"r": "Sensor de Proximidad", "mo": 32, "costo": 10, "obs": "", "d": "30 min"}, {"r": "Enc. Vol. Carga Inalámbrica", "mo": 32, "costo": 14, "obs": "", "d": "60 min"}, {"r": "Placa", "mo": 100, "costo": 10, "obs": "Riesgo de apagarse permanente", "d": "3-5 días"}, {"r": "SWAP", "mo": 169.4, "costo": 0, "obs": "", "d": "60 min"}], "iPhone 13 Pro": [{"r": "Software", "mo": 16, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Mantenimiento", "mo": 16, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo JCID Diagnóstico", "mo": 24, "costo": 105, "obs": "", "d": "30 min"}, {"r": "Módulo Réplica Apto IC", "mo": 32, "costo": 95, "obs": "", "d": "60 min"}, {"r": "Módulo InCell sin IC", "mo": 0, "costo": 49, "obs": "", "d": "—"}, {"r": "Remanufactura", "mo": 70, "costo": 5, "obs": "", "d": "60 min"}, {"r": "Batería sin historial", "mo": 30, "costo": 21, "obs": "", "d": "60 min"}, {"r": "Batería con historial", "mo": 24, "costo": 27, "obs": "", "d": "30 min"}, {"r": "Transplante EPROM batería", "mo": 58, "costo": 40, "obs": "", "d": "60 min"}, {"r": "Tapa Vidrio Réplica", "mo": 40, "costo": 8, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa Original", "mo": 48, "costo": 50, "obs": "", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 32, "costo": 4, "obs": "Solo estético", "d": "60 min"}, {"r": "Cámara Trasera Original", "mo": 28, "costo": 110, "obs": "", "d": "30 min"}, {"r": "Cámara Trasera + Tag-On JCID", "mo": 0, "costo": 137, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Cámara Frontal", "mo": 32, "costo": 17, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Parlante Auricular", "mo": 28, "costo": 16, "obs": "", "d": "30 min"}, {"r": "Parlante Principal", "mo": 28, "costo": 10, "obs": "", "d": "30 min"}, {"r": "Flex de Carga", "mo": 36, "costo": 14, "obs": "", "d": "60 min"}, {"r": "Sensor de Proximidad", "mo": 36, "costo": 7, "obs": "", "d": "30 min"}, {"r": "Enc. Vol. Carga Inalámbrica", "mo": 36, "costo": 17, "obs": "", "d": "60 min"}, {"r": "Placa", "mo": 104, "costo": 15, "obs": "Riesgo de apagarse permanente", "d": "3-5 días"}, {"r": "SWAP", "mo": 186.34, "costo": 0, "obs": "", "d": "60 min"}], "iPhone 13 Pro Max": [{"r": "Software", "mo": 16, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Mantenimiento", "mo": 16, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo JCID Diagnóstico", "mo": 24, "costo": 120, "obs": "", "d": "30 min"}, {"r": "Módulo Réplica Apto IC", "mo": 32, "costo": 95, "obs": "", "d": "60 min"}, {"r": "Módulo InCell sin IC", "mo": 0, "costo": 58, "obs": "", "d": "—"}, {"r": "Remanufactura", "mo": 70, "costo": 6, "obs": "", "d": "60 min"}, {"r": "Batería sin historial", "mo": 30, "costo": 26, "obs": "", "d": "60 min"}, {"r": "Batería con historial", "mo": 24, "costo": 34, "obs": "", "d": "30 min"}, {"r": "Transplante EPROM batería", "mo": 58, "costo": 45, "obs": "", "d": "60 min"}, {"r": "Tapa Vidrio Réplica", "mo": 40, "costo": 9, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa Original", "mo": 48, "costo": 46, "obs": "", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 32, "costo": 4, "obs": "Solo estético", "d": "60 min"}, {"r": "Cámara Trasera Original", "mo": 28, "costo": 110, "obs": "", "d": "30 min"}, {"r": "Cámara Trasera + Tag-On JCID", "mo": 0, "costo": 137, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Cámara Frontal", "mo": 32, "costo": 17, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Parlante Auricular", "mo": 28, "costo": 8, "obs": "", "d": "30 min"}, {"r": "Parlante Principal", "mo": 28, "costo": 5, "obs": "", "d": "30 min"}, {"r": "Flex de Carga", "mo": 36, "costo": 15, "obs": "", "d": "60 min"}, {"r": "Sensor de Proximidad", "mo": 36, "costo": 6, "obs": "", "d": "30 min"}, {"r": "Enc. Vol. Carga Inalámbrica", "mo": 36, "costo": 9, "obs": "", "d": "60 min"}, {"r": "Placa", "mo": 104, "costo": 15, "obs": "Riesgo de apagarse permanente", "d": "3-5 días"}, {"r": "SWAP", "mo": 186.34, "costo": 0, "obs": "", "d": "60 min"}], "iPhone 14": [{"r": "Software", "mo": 16, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Mantenimiento", "mo": 16, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo JCID Diagnóstico", "mo": 24, "costo": 80, "obs": "", "d": "30 min"}, {"r": "Módulo Réplica Apto IC", "mo": 32, "costo": 70, "obs": "", "d": "60 min"}, {"r": "Módulo InCell sin IC", "mo": 0, "costo": 39, "obs": "", "d": "—"}, {"r": "Remanufactura", "mo": 70, "costo": 5, "obs": "", "d": "60 min"}, {"r": "Batería sin historial", "mo": 30, "costo": 17, "obs": "", "d": "60 min"}, {"r": "Batería con historial", "mo": 24, "costo": 26, "obs": "", "d": "30 min"}, {"r": "Transplante EPROM batería", "mo": 58, "costo": 39, "obs": "", "d": "60 min"}, {"r": "Tapa Vidrio Réplica", "mo": 40, "costo": 10, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa Original", "mo": 48, "costo": 35, "obs": "", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 32, "costo": 3, "obs": "Solo estético", "d": "60 min"}, {"r": "Cámara Trasera Original", "mo": 28, "costo": 62, "obs": "", "d": "30 min"}, {"r": "Cámara Frontal", "mo": 32, "costo": 26, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Cámara Frontal + Tag-On JCID", "mo": 0, "costo": 67, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Parlante Auricular", "mo": 28, "costo": 12, "obs": "", "d": "30 min"}, {"r": "Parlante Principal", "mo": 28, "costo": 9, "obs": "", "d": "30 min"}, {"r": "Flex de Carga", "mo": 36, "costo": 12, "obs": "", "d": "60 min"}, {"r": "Sensor de Proximidad", "mo": 36, "costo": 8, "obs": "", "d": "30 min"}, {"r": "Flex Encendido", "mo": 36, "costo": 13, "obs": "", "d": "30 min"}, {"r": "Volumen y Silencio", "mo": 36, "costo": 15, "obs": "", "d": "30 min"}, {"r": "Flash / Carga Inalámbrica", "mo": 36, "costo": 16, "obs": "", "d": "60 min"}, {"r": "Placa", "mo": 136, "costo": 15, "obs": "Riesgo de apagarse permanente", "d": "3-5 días"}, {"r": "SWAP", "mo": 204.97, "costo": 0, "obs": "", "d": "—"}], "iPhone 14 Plus": [{"r": "Software", "mo": 16, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Mantenimiento", "mo": 16, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo JCID Diagnóstico", "mo": 24, "costo": 120, "obs": "", "d": "30 min"}, {"r": "Módulo Réplica Apto IC", "mo": 32, "costo": 98, "obs": "", "d": "60 min"}, {"r": "Módulo InCell sin IC", "mo": 0, "costo": 40, "obs": "", "d": "—"}, {"r": "Remanufactura", "mo": 70, "costo": 6, "obs": "", "d": "60 min"}, {"r": "Batería sin historial", "mo": 30, "costo": 20, "obs": "", "d": "60 min"}, {"r": "Batería con historial", "mo": 24, "costo": 29, "obs": "", "d": "30 min"}, {"r": "Transplante EPROM batería", "mo": 58, "costo": 56, "obs": "", "d": "60 min"}, {"r": "Tapa Vidrio Réplica", "mo": 40, "costo": 11, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa Original", "mo": 48, "costo": 60, "obs": "", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 32, "costo": 3, "obs": "Solo estético", "d": "60 min"}, {"r": "Cámara Trasera Original", "mo": 28, "costo": 62, "obs": "", "d": "30 min"}, {"r": "Cámara Trasera + Tag-On JCID", "mo": 32, "costo": 73, "obs": "", "d": "—"}, {"r": "Cámara Frontal", "mo": 32, "costo": 28, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Parlante Auricular", "mo": 28, "costo": 12, "obs": "", "d": "30 min"}, {"r": "Parlante Principal", "mo": 28, "costo": 6, "obs": "", "d": "30 min"}, {"r": "Flex de Carga", "mo": 36, "costo": 14, "obs": "", "d": "60 min"}, {"r": "Sensor de Proximidad", "mo": 36, "costo": 8, "obs": "", "d": "30 min"}, {"r": "Encendido", "mo": 36, "costo": 6, "obs": "", "d": "30 min"}, {"r": "Volumen", "mo": 36, "costo": 13, "obs": "", "d": "30 min"}, {"r": "Carga Inalámbrica", "mo": 36, "costo": 18, "obs": "", "d": "60 min"}, {"r": "Placa", "mo": 136, "costo": 15, "obs": "Riesgo de apagarse permanente", "d": "3-5 días"}], "iPhone 14 Pro": [{"r": "Software", "mo": 20, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Mantenimiento", "mo": 20, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo JCID Diagnóstico", "mo": 28, "costo": 222, "obs": "", "d": "30 min"}, {"r": "Módulo Réplica Apto IC", "mo": 36, "costo": 150, "obs": "", "d": "60 min"}, {"r": "Módulo InCell sin IC", "mo": 0, "costo": 55, "obs": "", "d": "—"}, {"r": "Remanufactura", "mo": 90, "costo": 6, "obs": "", "d": "60 min"}, {"r": "Batería sin historial", "mo": 34, "costo": 23, "obs": "", "d": "60 min"}, {"r": "Batería con historial", "mo": 28, "costo": 31, "obs": "", "d": "30 min"}, {"r": "Transplante EPROM batería", "mo": 64, "costo": 42, "obs": "", "d": "60 min"}, {"r": "Tapa Vidrio Réplica", "mo": 44, "costo": 10, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa Original", "mo": 52, "costo": 60, "obs": "", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 36, "costo": 4, "obs": "Solo estético", "d": "60 min"}, {"r": "Cámara Trasera Original", "mo": 32, "costo": 90, "obs": "", "d": "30 min"}, {"r": "Cámara Trasera + Tag-On JCID", "mo": 0, "costo": 107, "obs": "", "d": "—"}, {"r": "Cámara Frontal", "mo": 36, "costo": 29, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Parlante Auricular", "mo": 32, "costo": 8, "obs": "", "d": "30 min"}, {"r": "Parlante Principal", "mo": 32, "costo": 15, "obs": "", "d": "30 min"}, {"r": "Flex de Carga", "mo": 40, "costo": 24, "obs": "", "d": "60 min"}, {"r": "Sensor de Proximidad", "mo": 40, "costo": 17, "obs": "", "d": "30 min"}, {"r": "Enc. Vol. Carga Inalámbrica", "mo": 40, "costo": 18, "obs": "", "d": "60 min"}, {"r": "Placa", "mo": 140, "costo": 20, "obs": "Riesgo de apagarse permanente", "d": "3-5 días"}, {"r": "SWAP", "mo": 225.47, "costo": 0, "obs": "", "d": "—"}], "iPhone 14 Pro Max": [{"r": "Software", "mo": 20, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Mantenimiento", "mo": 20, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo JCID Diagnóstico", "mo": 28, "costo": 205, "obs": "", "d": "30 min"}, {"r": "Módulo Réplica Apto IC", "mo": 36, "costo": 170, "obs": "", "d": "60 min"}, {"r": "Módulo InCell sin IC", "mo": 0, "costo": 60, "obs": "", "d": "—"}, {"r": "Remanufactura", "mo": 90, "costo": 7, "obs": "", "d": "60 min"}, {"r": "Batería sin historial", "mo": 34, "costo": 28, "obs": "", "d": "60 min"}, {"r": "Batería con historial", "mo": 28, "costo": 33, "obs": "", "d": "30 min"}, {"r": "Transplante EPROM batería", "mo": 64, "costo": 57, "obs": "", "d": "60 min"}, {"r": "Tapa Vidrio Réplica", "mo": 44, "costo": 10, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa Original", "mo": 52, "costo": 55, "obs": "", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 36, "costo": 4, "obs": "Solo estético", "d": "60 min"}, {"r": "Cámara Trasera Original", "mo": 32, "costo": 90, "obs": "", "d": "30 min"}, {"r": "Cámara Trasera + Tag-On JCID", "mo": 0, "costo": 108, "obs": "", "d": "—"}, {"r": "Cámara Frontal", "mo": 36, "costo": 30, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Cámara Frontal + Tag-On JCID", "mo": 0, "costo": 69, "obs": "", "d": "—"}, {"r": "Parlante Auricular", "mo": 32, "costo": 9, "obs": "", "d": "30 min"}, {"r": "Parlante Principal", "mo": 32, "costo": 11, "obs": "", "d": "30 min"}, {"r": "Flex de Carga", "mo": 40, "costo": 25, "obs": "", "d": "60 min"}, {"r": "Sensor de Proximidad", "mo": 40, "costo": 18, "obs": "", "d": "30 min"}, {"r": "Enc. Vol. Carga Inalámbrica", "mo": 40, "costo": 18, "obs": "", "d": "60 min"}, {"r": "Placa", "mo": 140, "costo": 20, "obs": "Riesgo de apagarse permanente", "d": "3-5 días"}, {"r": "SWAP", "mo": 225.47, "costo": 0, "obs": "", "d": "—"}], "iPhone 15": [{"r": "Software", "mo": 20, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Mantenimiento", "mo": 20, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo JCID Diagnóstico", "mo": 28, "costo": 145, "obs": "", "d": "30 min"}, {"r": "Módulo Réplica Apto IC", "mo": 36, "costo": 110, "obs": "", "d": "60 min"}, {"r": "Módulo InCell sin IC", "mo": 0, "costo": 40, "obs": "", "d": "—"}, {"r": "Remanofactura", "mo": 90, "costo": 7, "obs": "", "d": "60 min"}, {"r": "Batería Ampsentrix Core", "mo": 34, "costo": 20, "obs": "", "d": "60 min"}, {"r": "Batería Ampsentrix Plus", "mo": 28, "costo": 27, "obs": "", "d": "30 min"}, {"r": "Batería Ampsentrix Pro + Transp. IC", "mo": 64, "costo": 43, "obs": "", "d": "60 min"}, {"r": "Tapa Vidrio Réplica", "mo": 44, "costo": 16, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa Original", "mo": 52, "costo": 44, "obs": "", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 36, "costo": 4, "obs": "Solo estético", "d": "60 min"}, {"r": "Cámara Trasera Original", "mo": 32, "costo": 48, "obs": "", "d": "30 min"}, {"r": "Cámara Frontal", "mo": 36, "costo": 29, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Cámara Frontal + Tag-On JCID", "mo": 0, "costo": 73, "obs": "", "d": "—"}, {"r": "Parlante Auricular", "mo": 32, "costo": 20, "obs": "", "d": "30 min"}, {"r": "Parlante Principal", "mo": 32, "costo": 15, "obs": "", "d": "30 min"}, {"r": "Flex de Carga", "mo": 40, "costo": 28, "obs": "", "d": "60 min"}, {"r": "Sensor de Proximidad", "mo": 40, "costo": 12, "obs": "", "d": "30 min"}, {"r": "Volumen", "mo": 40, "costo": 15, "obs": "", "d": "60 min"}, {"r": "Flex Encendido", "mo": 40, "costo": 22, "obs": "", "d": "60 min"}, {"r": "Flash y Carga Inalámbrica", "mo": 40, "costo": 18, "obs": "", "d": "60 min"}, {"r": "Placa", "mo": 180, "costo": 20, "obs": "Riesgo de apagarse permanente", "d": "3-5 días"}, {"r": "SWAP", "mo": 248.02, "costo": 0, "obs": "", "d": "—"}], "iPhone 15 Plus": [{"r": "Software", "mo": 20, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Mantenimiento", "mo": 20, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo Réplica Apto IC", "mo": 36, "costo": 160, "obs": "", "d": "60 min"}, {"r": "Remanofactura", "mo": 90, "costo": 7, "obs": "", "d": "60 min"}, {"r": "Batería Ampsentrix Core", "mo": 34, "costo": 23, "obs": "", "d": "60 min"}, {"r": "Batería Ampsentrix Plus", "mo": 28, "costo": 30, "obs": "", "d": "30 min"}, {"r": "Batería Ampsentrix Pro + Transp. IC", "mo": 64, "costo": 58, "obs": "", "d": "60 min"}, {"r": "Tapa Vidrio Réplica", "mo": 44, "costo": 17, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa Original", "mo": 52, "costo": 45, "obs": "", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 36, "costo": 4, "obs": "Solo estético", "d": "60 min"}, {"r": "Cámara Trasera Original", "mo": 32, "costo": 55, "obs": "", "d": "30 min"}, {"r": "Cámara Frontal", "mo": 36, "costo": 29, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Cámara Frontal + Tag-On JCID", "mo": 0, "costo": 76, "obs": "", "d": "—"}, {"r": "Parlante Auricular", "mo": 32, "costo": 15, "obs": "", "d": "30 min"}, {"r": "Parlante Principal", "mo": 32, "costo": 16, "obs": "", "d": "30 min"}, {"r": "Flex de Carga", "mo": 40, "costo": 35, "obs": "", "d": "60 min"}, {"r": "Sensor de Proximidad", "mo": 40, "costo": 6, "obs": "", "d": "30 min"}, {"r": "Flex Encendido", "mo": 40, "costo": 10, "obs": "", "d": "60 min"}, {"r": "Volumen", "mo": 40, "costo": 10, "obs": "", "d": "—"}, {"r": "Carga Inalámbrica", "mo": 40, "costo": 17, "obs": "", "d": "—"}, {"r": "Placa", "mo": 180, "costo": 20, "obs": "Riesgo de apagarse permanente", "d": "3-5 días"}, {"r": "SWAP", "mo": 248.02, "costo": 0, "obs": "", "d": "—"}], "iPhone 15 Pro": [{"r": "Software", "mo": 24, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Mantenimiento", "mo": 24, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo JCID Diagnóstico", "mo": 32, "costo": 230, "obs": "", "d": "30 min"}, {"r": "Módulo Réplica Apto IC", "mo": 40, "costo": 175, "obs": "", "d": "60 min"}, {"r": "Módulo InCell sin IC", "mo": 0, "costo": 59, "obs": "", "d": "—"}, {"r": "Remanofactura", "mo": 100, "costo": 8, "obs": "", "d": "60 min"}, {"r": "Batería Ampsentrix Core", "mo": 38, "costo": 25, "obs": "", "d": "60 min"}, {"r": "Batería Ampsentrix Plus", "mo": 32, "costo": 30, "obs": "", "d": "30 min"}, {"r": "Batería Ampsentrix Pro + Transp. IC", "mo": 70, "costo": 47, "obs": "", "d": "60 min"}, {"r": "Tapa Vidrio Réplica", "mo": 48, "costo": 23, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa Original", "mo": 56, "costo": 60, "obs": "", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 40, "costo": 6, "obs": "Solo estético", "d": "60 min"}, {"r": "Cámara Trasera Original", "mo": 36, "costo": 70, "obs": "", "d": "30 min"}, {"r": "Cámara Frontal", "mo": 40, "costo": 35, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Cámara Frontal + Tag-On JCID", "mo": 0, "costo": 82, "obs": "", "d": "—"}, {"r": "Parlante Auricular", "mo": 36, "costo": 13, "obs": "", "d": "30 min"}, {"r": "Parlante Principal", "mo": 36, "costo": 14, "obs": "", "d": "30 min"}, {"r": "Flex de Carga", "mo": 44, "costo": 40, "obs": "", "d": "60 min"}, {"r": "Sensor de Proximidad", "mo": 44, "costo": 10, "obs": "", "d": "30 min"}, {"r": "Encendido y Volumen", "mo": 44, "costo": 16, "obs": "", "d": "60 min"}, {"r": "Flash y Carga Inalámbrica", "mo": 44, "costo": 28, "obs": "", "d": "60 min"}, {"r": "Placa", "mo": 190, "costo": 25, "obs": "Riesgo de apagarse permanente", "d": "3-5 días"}, {"r": "SWAP", "mo": 272.82, "costo": 0, "obs": "", "d": "3-5 días"}], "iPhone 15 Pro Max": [{"r": "Software", "mo": 24, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Mantenimiento", "mo": 24, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo JCID Diagnóstico", "mo": 32, "costo": 230, "obs": "", "d": "30 min"}, {"r": "Módulo Réplica Apto IC", "mo": 40, "costo": 180, "obs": "", "d": "60 min"}, {"r": "Módulo InCell sin IC", "mo": 0, "costo": 60, "obs": "", "d": "—"}, {"r": "Remanofactura", "mo": 100, "costo": 8, "obs": "", "d": "60 min"}, {"r": "Batería Ampsentrix Core", "mo": 38, "costo": 31, "obs": "", "d": "60 min"}, {"r": "Batería Ampsentrix Plus", "mo": 32, "costo": 36, "obs": "", "d": "30 min"}, {"r": "Batería Ampsentrix Pro + Transp. IC", "mo": 70, "costo": 59, "obs": "", "d": "60 min"}, {"r": "Tapa Vidrio Réplica", "mo": 48, "costo": 25, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa Original", "mo": 56, "costo": 60, "obs": "", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 40, "costo": 6, "obs": "Solo estético", "d": "60 min"}, {"r": "Cámara Trasera Original", "mo": 36, "costo": 80, "obs": "", "d": "30 min"}, {"r": "Cámara Frontal", "mo": 40, "costo": 35, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Cámara Frontal + Tag-On JCID", "mo": 0, "costo": 79, "obs": "", "d": "—"}, {"r": "Parlante Auricular", "mo": 36, "costo": 10, "obs": "", "d": "30 min"}, {"r": "Parlante Principal", "mo": 36, "costo": 22, "obs": "", "d": "30 min"}, {"r": "Flex de Carga", "mo": 44, "costo": 35, "obs": "", "d": "60 min"}, {"r": "Sensor de Proximidad", "mo": 44, "costo": 15, "obs": "", "d": "30 min"}, {"r": "Encendido y Volumen", "mo": 44, "costo": 16, "obs": "", "d": "60 min"}, {"r": "Flash y Carga Inalámbrica", "mo": 44, "costo": 35, "obs": "", "d": "60 min"}, {"r": "Placa", "mo": 190, "costo": 25, "obs": "Riesgo de apagarse permanente", "d": "3-5 días"}, {"r": "SWAP", "mo": 272.82, "costo": 0, "obs": "", "d": "3-5 días"}], "iPhone 16": [{"r": "Software", "mo": 24, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Mantenimiento", "mo": 24, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo Réplica Apto IC", "mo": 40, "costo": 195, "obs": "", "d": "60 min"}, {"r": "Módulo InCell sin IC", "mo": 0, "costo": 110, "obs": "", "d": "—"}, {"r": "Remanofactura", "mo": 120, "costo": 9, "obs": "", "d": "60 min"}, {"r": "Batería Ampsentrix Core", "mo": 0, "costo": 38, "obs": "", "d": "60 min"}, {"r": "Batería Ampsentrix Plus", "mo": 0, "costo": 38, "obs": "", "d": "30 min"}, {"r": "Batería Ampsentrix Pro + Transp. IC", "mo": 0, "costo": 38, "obs": "", "d": "60 min"}, {"r": "Tapa Vidrio Réplica", "mo": 56, "costo": 16, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa Original", "mo": 52, "costo": 90, "obs": "", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 40, "costo": 6, "obs": "Solo estético", "d": "60 min"}, {"r": "Cámara Trasera Original", "mo": 36, "costo": 75, "obs": "", "d": "30 min"}, {"r": "Cámara Frontal", "mo": 40, "costo": 42, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Parlante Auricular", "mo": 36, "costo": 15, "obs": "", "d": "60 min"}, {"r": "Parlante Principal", "mo": 36, "costo": 11, "obs": "", "d": "30 min"}, {"r": "Flex de Carga", "mo": 44, "costo": 30, "obs": "", "d": "30 min"}, {"r": "Sensor de Proximidad", "mo": 44, "costo": 50, "obs": "", "d": "60 min"}, {"r": "Encendido", "mo": 44, "costo": 12, "obs": "", "d": "30 min"}, {"r": "Volumen", "mo": 44, "costo": 13, "obs": "", "d": "60 min"}, {"r": "Flash y Carga Inalámbrica", "mo": 44, "costo": 40, "obs": "", "d": "60 min"}, {"r": "Placa", "mo": 210, "costo": 25, "obs": "Riesgo de apagarse permanente", "d": "3-5 días"}, {"r": "SWAP", "mo": 300.1, "costo": 0, "obs": "", "d": "3-5 días"}], "iPhone 16 Plus": [{"r": "Software", "mo": 24, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Mantenimiento", "mo": 24, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo Original (sin mensaje)", "mo": 0, "costo": 385, "obs": "", "d": "—"}, {"r": "Remanofactura", "mo": 120, "costo": 0, "obs": "", "d": "60 min"}, {"r": "Batería Ampsentrix Core", "mo": 0, "costo": 49, "obs": "", "d": "60 min"}, {"r": "Batería Ampsentrix Plus", "mo": 0, "costo": 49, "obs": "", "d": "30 min"}, {"r": "Batería Ampsentrix Pro + Transp. IC", "mo": 0, "costo": 49, "obs": "", "d": "60 min"}, {"r": "Tapa Vidrio Réplica", "mo": 48, "costo": 20, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa Original", "mo": 56, "costo": 90, "obs": "", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 40, "costo": 6, "obs": "Solo estético", "d": "60 min"}, {"r": "Cámara Trasera Original", "mo": 36, "costo": 77, "obs": "", "d": "30 min"}, {"r": "Cámara Frontal", "mo": 40, "costo": 43, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Parlante Auricular", "mo": 36, "costo": 18, "obs": "", "d": "60 min"}, {"r": "Parlante Principal", "mo": 36, "costo": 13, "obs": "", "d": "30 min"}, {"r": "Flex de Carga", "mo": 44, "costo": 24, "obs": "", "d": "30 min"}, {"r": "Sensor de Proximidad", "mo": 44, "costo": 16, "obs": "", "d": "60 min"}, {"r": "Encendido", "mo": 44, "costo": 15, "obs": "", "d": "30 min"}, {"r": "Volumen", "mo": 44, "costo": 11, "obs": "", "d": "60 min"}, {"r": "Flash y Carga Inalámbrica", "mo": 44, "costo": 40, "obs": "", "d": "60 min"}, {"r": "Placa", "mo": 210, "costo": 25, "obs": "Riesgo de apagarse permanente", "d": "3-5 días"}, {"r": "SWAP", "mo": 300.1, "costo": 0, "obs": "", "d": "3-5 días"}], "iPhone 16 Pro": [{"r": "Software", "mo": 30, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Mantenimiento", "mo": 30, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo Réplica Apto IC", "mo": 44, "costo": 310, "obs": "", "d": "60 min"}, {"r": "Remanofactura", "mo": 140, "costo": 10, "obs": "", "d": "60 min"}, {"r": "Batería Ampsentrix Core", "mo": 0, "costo": 49, "obs": "", "d": "60 min"}, {"r": "Batería Ampsentrix Plus", "mo": 0, "costo": 49, "obs": "", "d": "30 min"}, {"r": "Batería Ampsentrix Pro + Transp. IC", "mo": 0, "costo": 49, "obs": "", "d": "60 min"}, {"r": "Tapa Vidrio Réplica", "mo": 52, "costo": 38, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa Original", "mo": 60, "costo": 140, "obs": "", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 44, "costo": 9, "obs": "Solo estético", "d": "60 min"}, {"r": "Cámara Trasera Original", "mo": 40, "costo": 60, "obs": "", "d": "30 min"}, {"r": "Cámara Frontal", "mo": 44, "costo": 44, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Parlante Auricular", "mo": 40, "costo": 19, "obs": "", "d": "60 min"}, {"r": "Parlante Principal", "mo": 40, "costo": 10, "obs": "", "d": "30 min"}, {"r": "Flex de Carga", "mo": 48, "costo": 20, "obs": "", "d": "30 min"}, {"r": "Sensor de Proximidad", "mo": 48, "costo": 12, "obs": "", "d": "60 min"}, {"r": "Encendido", "mo": 48, "costo": 13, "obs": "", "d": "30 min"}, {"r": "Volumen", "mo": 48, "costo": 13, "obs": "", "d": "60 min"}, {"r": "Flash y Carga Inalámbrica", "mo": 48, "costo": 40, "obs": "", "d": "60 min"}, {"r": "Placa", "mo": 220, "costo": 30, "obs": "Riesgo de apagarse permanente", "d": "3-5 días"}, {"r": "SWAP", "mo": 330.11, "costo": 0, "obs": "", "d": "3-5 días"}], "iPhone 16 Pro Max": [{"r": "Software", "mo": 30, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Mantenimiento", "mo": 30, "costo": 0, "obs": "", "d": "30 min"}, {"r": "Módulo Original (sin mensaje)", "mo": 0, "costo": 500, "obs": "", "d": "—"}, {"r": "Módulo Réplica Apto IC", "mo": 44, "costo": 380, "obs": "", "d": "60 min"}, {"r": "Remanofactura", "mo": 140, "costo": 10, "obs": "", "d": "60 min"}, {"r": "Tapa Vidrio Réplica", "mo": 52, "costo": 43, "obs": "", "d": "3/4 hs"}, {"r": "Carcasa Original", "mo": 60, "costo": 160, "obs": "", "d": "3/4 hs"}, {"r": "Lente Cámara", "mo": 44, "costo": 9, "obs": "Solo estético", "d": "60 min"}, {"r": "Cámara Trasera Original", "mo": 40, "costo": 70, "obs": "", "d": "30 min"}, {"r": "Cámara Frontal", "mo": 44, "costo": 95, "obs": "Riesgo de perder Face ID", "d": "60 min"}, {"r": "Parlante Auricular", "mo": 40, "costo": 20, "obs": "", "d": "30 min"}, {"r": "Parlante Principal", "mo": 40, "costo": 12, "obs": "", "d": "30 min"}, {"r": "Flex de Carga", "mo": 48, "costo": 21, "obs": "", "d": "60 min"}, {"r": "Sensor de Proximidad", "mo": 48, "costo": 12, "obs": "", "d": "60 min"}, {"r": "Encendido", "mo": 48, "costo": 13, "obs": "", "d": "60 min"}, {"r": "Volumen", "mo": 48, "costo": 13, "obs": "", "d": "60 min"}, {"r": "Flash y Carga Inalámbrica", "mo": 48, "costo": 40, "obs": "", "d": "60 min"}, {"r": "Placa", "mo": 220, "costo": 30, "obs": "Riesgo de apagarse permanente", "d": "3-5 días"}, {"r": "SWAP", "mo": 220, "costo": 0, "obs": "", "d": "3-5 días"}]}, "proveedores": {"Ampsentrix Core (sin flex)": {"iPhone XR": 16, "iPhone XS": 16, "iPhone XS Max": 17, "iPhone 11": 15, "iPhone 11 Pro": 20, "iPhone 11 Pro Max": 22, "iPhone 12": 16, "iPhone 12 Mini": 15, "iPhone 12 Pro": 16, "iPhone 12 Pro Max": 22, "iPhone 13": 17, "iPhone 13 Mini": 15, "iPhone 13 Pro": 21, "iPhone 13 Pro Max": 26, "iPhone 14": 17, "iPhone 14 Plus": 20, "iPhone 14 Pro": 23, "iPhone 14 Pro Max": 28, "iPhone 15": 20, "iPhone 15 Plus": 23, "iPhone 15 Pro": 25, "iPhone 15 Pro Max": 31}, "Ampsentrix Plus (apta diagnóstico)": {"iPhone 12": 23, "iPhone 12 Mini": 20, "iPhone 12 Pro": 23, "iPhone 12 Pro Max": 29, "iPhone 13": 26, "iPhone 13 Mini": 23, "iPhone 13 Pro": 27, "iPhone 13 Pro Max": 33, "iPhone 14": 26, "iPhone 14 Plus": 29, "iPhone 14 Pro": 31, "iPhone 14 Pro Max": 33, "iPhone 15": 27, "iPhone 15 Plus": 30, "iPhone 15 Pro": 30, "iPhone 15 Pro Max": 36}, "Tag-On Ampsentrix (programado)": {"iPhone 11": 5, "iPhone 11 Pro / Pro Max": 5, "iPhone 12 / Mini / Pro": 5, "iPhone 12 Pro Max": 6, "iPhone 13 / Mini": 6, "iPhone 13 Pro / Pro Max": 6, "iPhone 14 / Plus": 7, "iPhone 14 Pro / Pro Max": 7, "iPhone 15 / Plus": 7, "iPhone 15 Pro / Pro Max": 7}, 
+"acc_mayoreo": {
+  "Cargador 20W Original": [
+    {"qty":"x1","usd":35},{"qty":"x5","usd":21},{"qty":"x10","usd":20},
+    {"qty":"x20","usd":19},{"qty":"x50","usd":18},{"qty":"x100","usd":17}
+  ],
+  "Cable USB-C a USB-C Original": [
+    {"qty":"x1","usd":25},{"qty":"x5","usd":19},{"qty":"x10","usd":18},
+    {"qty":"x20","usd":17},{"qty":"x50","usd":16}
+  ],
+  "Cable USB-C a Lightning Original": [
+    {"qty":"x1","usd":25},{"qty":"x5","usd":19},{"qty":"x10","usd":18},
+    {"qty":"x20","usd":17},{"qty":"x50","usd":16}
+  ],
+  "Cargador 40W Original": [
+    {"qty":"x1","usd":45},{"qty":"x5","usd":29},{"qty":"x10","usd":28},
+    {"qty":"x20","usd":27},{"qty":"x50","usd":26.5},{"qty":"x100","usd":25}
+  ]
+}}};
+
+let TC = 1300;
+let dolarData = [];
+
+// ─── FORMAT ───
+const fARS = n => '$' + Math.round(n).toLocaleString('es-AR');
+const fUSD = n => n > 0 ? 'U$D ' + (+n).toFixed(2) : '—';
+const toARS = usd => usd * TC;
+const sugerido = costoARS => Math.ceil(costoARS * 1.45 / 100) * 100;
+
+// ─── TC ───
+function onTCChange() {
+  TC = parseFloat(document.getElementById('tcInput').value) || 1300;
+  const sel = document.getElementById('selRep').value;
+  if (sel !== '') onRepChange();
+  renderTabla();
+  renderProv();
+}
+
+function setTC(val, label) {
+  TC = val;
+  document.getElementById('tcInput').value = val;
+  document.getElementById('tcSource').textContent = label || 'ARS/USD';
+  onTCChange();
+}
+
+// ─── DÓLAR API ───
+async function fetchDolar() {
+  try {
+    const res = await fetch('https://dolarapi.com/v1/dolares');
+    if (!res.ok) throw new Error();
+    dolarData = await res.json();
+    const blue = dolarData.find(d => d.casa === 'blue');
+    if (blue) {
+      const val = blue.venta;
+      document.getElementById('navDolarVal').textContent = fARS(val);
+      document.getElementById('navDolarVal').classList.remove('loading');
+      // Auto-set TC to blue venta
+      TC = val;
+      document.getElementById('tcInput').value = val;
+      document.getElementById('tcSource').textContent = 'Blue · DolarHoy';
+      onTCChange();
+    }
+    renderDolarCards();
+  } catch(e) {
+    document.getElementById('navDolarVal').textContent = 'Sin conexión';
+  }
+}
+
+function renderDolarCards() {
+  if (!dolarData.length) return;
+  const names = {
+    oficial:'Oficial', blue:'Blue', bolsa:'Bolsa (MEP)',
+    contadoconliqui:'CCL', mayorista:'Mayorista', cripto:'Cripto', tarjeta:'Tarjeta'
+  };
+  const container = document.getElementById('dolarCards');
+  container.innerHTML = dolarData.map(d => {
+    const label = names[d.casa] || d.nombre || d.casa;
+    const isBlue = d.casa === 'blue';
+    return `
+      <div class="dolar-card" style="${isBlue ? 'border-color:var(--accent);background:var(--accent-light);' : ''}">
+        <div class="dolar-card-label">${label}</div>
+        <div class="dolar-card-buy">Compra: ${fARS(d.compra)}</div>
+        <div class="dolar-card-sell">${fARS(d.venta)} <span>venta</span></div>
+        <button class="btn-use" onclick="setTC(${d.venta}, '${label}')">Usar este TC</button>
+      </div>`;
+  }).join('');
+
+  const ts = dolarData[0]?.fechaActualizacion;
+  if (ts) {
+    const d = new Date(ts);
+    document.getElementById('dolarTs').textContent = 'Última actualización: ' + d.toLocaleString('es-AR');
+  }
+}
+
+// ─── TABS ───
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (id === 'tabla') renderTabla();
+  if (id === 'proveedores') renderProv();
+  if (id === 'dolar') renderDolarCards();
+}
+
+// ─── CONSULTA ───
+function onModeloChange() {
+  const m = document.getElementById('selModelo').value;
+  const selR = document.getElementById('selRep');
+  selR.innerHTML = '<option value="">Elegí una reparación…</option>';
+  if (!m) { selR.disabled = true; clearResult(); return; }
+  selR.disabled = false;
+  (RAW.modelos[m] || []).forEach((r, i) => {
+    selR.innerHTML += `<option value="${i}">${r.r}</option>`;
+  });
+  clearResult();
+}
+
+function clearResult() {
+  document.getElementById('resultArea').innerHTML = `
+    <div class="empty-state">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+      <p>Seleccioná una reparación para ver el presupuesto</p>
+    </div>`;
+}
+
+function onRepChange() {
+  const m = document.getElementById('selModelo').value;
+  const idx = document.getElementById('selRep').value;
+  if (!m || idx === '') { clearResult(); return; }
+  const rep = RAW.modelos[m][parseInt(idx)];
+  renderResult(m, rep);
+}
+
+function renderResult(modelo, rep) {
+  const costoRepUSD = rep.costo || 0;
+  const moUSD = rep.mo || 0;
+  const totalUSD = costoRepUSD + moUSD;
+  const totalARS = toARS(totalUSD);
+  const sugARS = sugerido(totalARS);
+  const ganARS = sugARS - totalARS;
+  const margen = totalARS > 0 ? ((ganARS / totalARS) * 100).toFixed(0) : 0;
+
+  const obsHTML = rep.obs ? `
+    <div class="hero-obs">
+      <span>⚠</span>
+      <span>${rep.obs}</span>
+    </div>` : '';
+
+  document.getElementById('resultArea').innerHTML = `
+    <div class="result-wrap">
+      <div class="hero-card">
+        <div class="hero-top">
+          <div>
+            <div class="hero-model">${modelo}</div>
+            <div class="hero-repair">${rep.r}</div>
+          </div>
+          <div class="hero-badge">⏱ ${rep.d || '—'}</div>
+        </div>
+        <div class="hero-metrics">
+          <div class="metric">
+            <span class="metric-label">Repuesto</span>
+            <span class="metric-value">${fUSD(costoRepUSD)}</span>
+            <span class="metric-sub">${fARS(toARS(costoRepUSD))}</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Mano de Obra</span>
+            <span class="metric-value">${fUSD(moUSD)}</span>
+            <span class="metric-sub">${fARS(toARS(moUSD))}</span>
+          </div>
+          <div class="metric accent-blue">
+            <span class="metric-label">Precio Sugerido</span>
+            <span class="metric-value">${fARS(sugARS)}</span>
+            <span class="metric-sub">TC ${Math.round(TC).toLocaleString('es-AR')}</span>
+          </div>
+          <div class="metric highlight">
+            <span class="metric-label">Ganancia ${margen}%</span>
+            <span class="metric-value">${fARS(ganARS)}</span>
+            <span class="metric-sub">${fUSD(ganARS / TC)}</span>
+          </div>
+        </div>
+        ${obsHTML}
+      </div>
+
+      <div class="adjuster-card">
+        <span class="adjuster-label">Ajustar precio de venta</span>
+        <div class="adjuster-input-wrap">
+          <span class="adjuster-prefix">$</span>
+          <input class="adjuster-input" type="number" id="adjInput" value="${sugARS}" min="0" step="100"
+            oninput="recalcAdj(${totalARS})">
+        </div>
+        <div class="adjuster-result" id="adjResult"></div>
+      </div>
+    </div>`;
+  recalcAdj(totalARS);
+}
+
+function recalcAdj(costoARS) {
+  const venta = parseFloat(document.getElementById('adjInput')?.value) || 0;
+  const gan = venta - costoARS;
+  const m = costoARS > 0 ? ((gan / costoARS) * 100).toFixed(1) : 0;
+  const cls = gan >= 0 ? 'gain-pos' : 'gain-neg';
+  const el = document.getElementById('adjResult');
+  if (el) el.innerHTML = `Ganancia: <span class="${cls}">${fARS(gan)}</span> &nbsp;·&nbsp; <strong>${m}%</strong> sobre costo`;
+}
+
+// ─── TABLA ───
+function renderTabla() {
+  const q = (document.getElementById('tablaSearch')?.value || '').toLowerCase();
+  const mf = document.getElementById('tablaModelFilter')?.value || '';
+  const tbody = document.getElementById('tablaBody');
+  let rows = [];
+
+  Object.entries(RAW.modelos).forEach(([modelo, reps]) => {
+    if (mf && modelo !== mf) return;
+    reps.forEach(rep => {
+      if (q && !modelo.toLowerCase().includes(q) && !rep.r.toLowerCase().includes(q)) return;
+      const costoRepUSD = rep.costo || 0;
+      const moUSD = rep.mo || 0;
+      const totalUSD = costoRepUSD + moUSD;
+      const totalARS = toARS(totalUSD);
+      const sug = sugerido(totalARS);
+      const gan = sug - totalARS;
+      rows.push({ modelo, rep, costoRepUSD, moUSD, totalUSD, totalARS, sug, gan });
+    });
+  });
+
+  document.getElementById('tablaCount').textContent = `${rows.length} reparaciones`;
+
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><p>Sin resultados para la búsqueda</p></div></td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = rows.map(r => `
+    <tr>
+      <td class="td-model">${r.modelo}</td>
+      <td>${r.rep.r}</td>
+      <td class="td-num">${r.costoRepUSD > 0 ? fUSD(r.costoRepUSD) : '<span class="td-num-dim">—</span>'}</td>
+      <td class="td-num">${r.moUSD > 0 ? fUSD(r.moUSD) : '<span class="td-num-dim">—</span>'}</td>
+      <td class="td-num">${fARS(r.totalARS)}<br><span class="td-num-dim">${fUSD(r.totalUSD)}</span></td>
+      <td class="td-num" style="font-weight:600;">${fARS(r.sug)}</td>
+      <td class="td-gain">${fARS(r.gan)}</td>
+      <td class="td-demora">${r.rep.d || '—'}</td>
+    </tr>`).join('');
+}
+
+// ─── PROVEEDORES ───
+function renderProv() {
+  const container = document.getElementById('provGrid');
+  let html = '';
+
+  // Tarjetas normales (baterías, tag-on, acc x1)
+  const skip = ['acc_mayoreo', 'Accesorios Apple Originales (precio x1 USD)'];
+  Object.entries(RAW.proveedores).forEach(([titulo, items]) => {
+    if (skip.includes(titulo)) return;
+    html += `
+      <div class="prov-card">
+        <div class="prov-header">
+          <div class="prov-title">${titulo}</div>
+          <div class="prov-sub">Precio en USD · equivalente ARS al TC actual</div>
+        </div>
+        <div class="prov-body">
+          ${Object.entries(items).map(([nombre, usd]) => `
+            <div class="prov-row">
+              <span class="prov-name">${nombre}</span>
+              <div class="prov-prices">
+                <span class="prov-usd">${fUSD(usd)}</span>
+                <span class="prov-ars">${fARS(toARS(usd))}</span>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  });
+
+  // Tarjetas de mayoreo con tabla de escalones
+  const mayoreo = RAW.proveedores['acc_mayoreo'];
+  if (mayoreo) {
+    Object.entries(mayoreo).forEach(([producto, escalones]) => {
+      const best = escalones[escalones.length - 1]; // menor precio
+      const x1   = escalones[0];
+      html += `
+        <div class="prov-card" style="border-color:rgba(0,113,227,0.2);">
+          <div class="prov-header" style="background:rgba(0,113,227,0.05);">
+            <div class="prov-title" style="display:flex;justify-content:space-between;align-items:center;">
+              <span>${producto}</span>
+              <span style="font-size:11px;background:rgba(0,113,227,0.1);color:var(--accent);border-radius:6px;padding:2px 8px;font-weight:600;">Precio x mayor</span>
+            </div>
+            <div class="prov-sub">Mejor precio: <strong style="color:var(--accent);">U$D ${best.usd} (${best.qty})</strong> · Precio unitario: U$D ${x1.usd}</div>
+          </div>
+          <div class="prov-body">
+            <div style="display:grid;grid-template-columns:repeat(${escalones.length},1fr);gap:1px;background:var(--border);border-radius:8px;overflow:hidden;margin:8px 0;">
+              ${escalones.map(e => {
+                const isBest = e.usd === best.usd;
+                const ahorro = Math.round((1 - e.usd/x1.usd) * 100);
+                return `
+                  <div style="background:${isBest ? 'rgba(0,113,227,0.08)' : 'var(--bg)'};padding:10px 8px;text-align:center;">
+                    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:${isBest ? 'var(--accent)' : 'var(--text-tertiary)'};">${e.qty}</div>
+                    <div style="font-size:14px;font-weight:800;color:${isBest ? 'var(--accent)' : 'var(--text-primary)'};margin:3px 0;">U$D ${e.usd}</div>
+                    <div style="font-size:10px;color:var(--text-tertiary);">${fARS(toARS(e.usd))}</div>
+                    ${ahorro > 0 ? `<div style="font-size:9px;color:var(--green);font-weight:600;margin-top:2px;">-${ahorro}%</div>` : ''}
+                  </div>`;
+              }).join('')}
+            </div>
+          </div>
+        </div>`;
+    });
+  }
+
+  container.innerHTML = html;
+}
+
+
+// ─── REMITO ───
+function initRemitoModelos() {
+  const sel = document.getElementById('r_modelo');
+  Object.keys(RAW.modelos).forEach(m => {
+    sel.innerHTML += `<option value="${m}">${m}</option>`;
+  });
+  // Set today's date
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('r_fecha').value = today;
+}
+
+function genNumero() {
+  return 'ISM-' + Date.now().toString(36).toUpperCase().slice(-6);
+}
+
+function limpiarRemito() {
+  ['r_nombre','r_tel','r_color','r_pin','r_bat','r_servicio','r_total','r_obs','r_obs_checkin'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('r_modelo').value = '';
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('r_fecha').value = today;
+  ['ci_pantalla','ci_carcasa','ci_bateria','ci_camara','ci_carga','ci_bocina','ci_micro','ci_faceid','ci_wifi','ci_señal','ci_boton','ci_vidrio'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.checked = false;
+  });
+  document.getElementById('remitoPreview').innerHTML = '<div style="text-align:center;padding:40px;color:#aeaeb2;font-size:13px;">Completá los datos y hacé click en &quot;Actualizar&quot; para ver la vista previa</div>';
+}
+
+function getRemitoData() {
+  const checks = [
+    {id:'ci_pantalla', label:'Pantalla rota / rayada'},
+    {id:'ci_carcasa',  label:'Carcasa dañada'},
+    {id:'ci_bateria',  label:'Batería degradada'},
+    {id:'ci_camara',   label:'Cámara con falla'},
+    {id:'ci_carga',    label:'Pin de carga flojo'},
+    {id:'ci_bocina',   label:'Parlante / bocina falla'},
+    {id:'ci_micro',    label:'Micrófono falla'},
+    {id:'ci_faceid',   label:'Face ID / Touch ID falla'},
+    {id:'ci_wifi',     label:'Wi-Fi / Bluetooth falla'},
+    {id:'ci_señal',    label:'Sin señal / Sin SIM'},
+    {id:'ci_boton',    label:'Botón roto'},
+    {id:'ci_vidrio',   label:'Vidrio trasero roto'},
+  ];
+  return {
+    numero: genNumero(),
+    nombre:   document.getElementById('r_nombre').value.trim() || '—',
+    tel:      document.getElementById('r_tel').value.trim() || '—',
+    modelo:   document.getElementById('r_modelo').value || '—',
+    color:    document.getElementById('r_color').value.trim() || '—',
+    pin:      document.getElementById('r_pin').value.trim() || '—',
+    bat:      document.getElementById('r_bat').value.trim() || '—',
+    servicio: document.getElementById('r_servicio').value.trim() || '—',
+    fecha:    document.getElementById('r_fecha').value || new Date().toISOString().split('T')[0],
+    total:    parseFloat(document.getElementById('r_total').value) || 0,
+    obs:      document.getElementById('r_obs').value.trim(),
+    obsCI:    document.getElementById('r_obs_checkin').value.trim(),
+    checks:   checks.map(c => ({label: c.label, checked: document.getElementById(c.id).checked})),
+  };
+}
+
+function buildRemitoHTML(d, printMode = false) {
+  const fechaFmt = d.fecha ? new Date(d.fecha + 'T12:00:00').toLocaleDateString('es-AR', {day:'2-digit',month:'long',year:'numeric'}) : '—';
+  const totalFmt = d.total > 0 ? '$' + Math.round(d.total).toLocaleString('es-AR') : 'A convenir';
+
+  const checksHTML = d.checks.map(c => `
+    <div class="checkin-item">
+      <div class="check-box${c.checked ? ' checked' : ''}"></div>
+      <span style="${c.checked ? 'font-weight:600;' : 'color:#aeaeb2;'}">${c.label}</span>
+    </div>`).join('');
+
+  const obsHTML = d.obs ? `<div style="margin-top:10px;padding:10px 12px;background:#fff;border-radius:8px;border:1px solid #e5e5ea;font-size:11px;color:#6e6e73;line-height:1.5;"><strong style="color:#1d1d1f;">Observaciones:</strong> ${d.obs}</div>` : '';
+  const obsCIHTML = d.obsCI ? `<div style="margin-top:8px;font-size:11px;color:#6e6e73;"><strong style="color:#1d1d1f;">Obs. ingreso:</strong> ${d.obsCI}</div>` : '';
+
+  return `
+<div class="remito-doc">
+
+  <!-- HEADER -->
+  <div class="remito-header">
+    <div>
+      <div class="remito-brand-name">iService<span style="color:#0071e3;">.</span>Mercedes</div>
+      <div class="remito-brand-sub">Servicio técnico especializado · Mercedes, Buenos Aires</div>
+      <div style="margin-top:8px;font-size:11px;color:#aeaeb2;">@iservice.mercedes</div>
+    </div>
+    <div class="remito-header-right">
+      <div class="remito-num-label">N° de Orden</div>
+      <div class="remito-num">${d.numero}</div>
+      <div class="remito-fecha">Fecha: ${fechaFmt}</div>
+    </div>
+  </div>
+
+  <!-- CLIENTE + EQUIPO -->
+  <div class="remito-grid2">
+    <div class="remito-block">
+      <div class="remito-block-title">Datos del Cliente</div>
+      <div class="remito-field"><span class="remito-field-label">Nombre:</span><span class="remito-field-value">${d.nombre}</span></div>
+      <div class="remito-field"><span class="remito-field-label">Teléfono:</span><span class="remito-field-value">${d.tel}</span></div>
+    </div>
+    <div class="remito-block">
+      <div class="remito-block-title">Datos del Equipo</div>
+      <div class="remito-field"><span class="remito-field-label">Modelo:</span><span class="remito-field-value">${d.modelo}</span></div>
+      <div class="remito-field"><span class="remito-field-label">Color / Cap.:</span><span class="remito-field-value">${d.color}</span></div>
+      <div class="remito-field"><span class="remito-field-label">PIN:</span><span class="remito-field-value">${d.pin}</span></div>
+      <div class="remito-field"><span class="remito-field-label">Batería:</span><span class="remito-field-value">${d.bat}</span></div>
+    </div>
+  </div>
+
+  <!-- SERVICIO -->
+  <div class="remito-servicio-box">
+    <div class="remito-block-title">Servicio / Reparación</div>
+    <div style="font-size:13px;font-weight:500;color:#1d1d1f;line-height:1.5;">${d.servicio}</div>
+    ${obsHTML}
+  </div>
+
+  <!-- CHECK-IN -->
+  <div class="remito-section">
+    <div class="remito-section-title">Estado del equipo al ingreso — Check-In</div>
+    <div class="remito-block">
+      <div class="checkin-grid">${checksHTML}</div>
+      ${obsCIHTML}
+    </div>
+  </div>
+
+  <!-- TOTAL -->
+  <div class="remito-total-row">
+    <span class="remito-total-label">Total del servicio</span>
+    <span class="remito-total-value">${totalFmt}</span>
+  </div>
+
+  <!-- FIRMAS -->
+  <div class="remito-footer">
+    <div class="remito-sign-area">
+      <div class="remito-sign-line"></div>
+      <div class="remito-sign-label">Firma del cliente / Conformidad</div>
+    </div>
+    <div class="remito-legal">
+      <strong style="color:#1d1d1f;">Aviso importante:</strong> iService.Mercedes no se responsabiliza por daños preexistentes no declarados al momento del ingreso. El equipo debe retirarse dentro de los 30 días hábiles. Pasado ese plazo, se cobrará estadía. Al retirar el equipo, el cliente acepta que la reparación fue realizada correctamente.
+    </div>
+  </div>
+
+</div>`;
+}
+
+function renderPreview() {
+  const d = getRemitoData();
+  document.getElementById('remitoPreview').innerHTML = buildRemitoHTML(d);
+}
+
+function imprimirRemito() {
+  const d = getRemitoData();
+  const html = buildRemitoHTML(d, true);
+
+  // Create a hidden print-only div
+  let printRoot = document.getElementById('printRoot');
+  if (!printRoot) {
+    printRoot = document.createElement('div');
+    printRoot.id = 'printRoot';
+    document.body.appendChild(printRoot);
+  }
+  printRoot.style.cssText = 'display:none;position:fixed;top:0;left:0;width:100%;z-index:9999;background:white;padding:32px;';
+  printRoot.innerHTML = html;
+
+  // Before print: show it
+  window.addEventListener('beforeprint', () => {
+    printRoot.style.display = 'block';
+  }, {once: true});
+
+  // After print: hide it
+  window.addEventListener('afterprint', () => {
+    printRoot.style.display = 'none';
+  }, {once: true});
+
+  window.print();
+
+  // Update preview too
+  document.getElementById('remitoPreview').innerHTML = html;
+}
+
+
+// ─── DATOS IPHONES USADOS (precios en USD - mercado ARG marzo 2026) ───
+// Fuentes: MercadoLibre, HeyShop, GrupoTec, CelluMarket
+// Precio en USD del segmento medio del mercado usado (batería 85-95%, buen estado)
+const USADOS = [
+  // Datos reales del catálogo iPhoneGlory (cocoscrm) · Marzo 2026
+  // Precios son VENTA AL CLIENTE en USD · Grado estético A/A+/A-
+  // usdMin = precio más bajo visto en catálogo · usdMax = más alto · usdAvg = promedio
+
+  { modelo: 'iPhone SE 2022',   cap: '256GB', grado: 'A+',  usdMin: 185,  usdMax: 185,  usdAvg: 185,  nota: 'Chip A15, diseño clásico con botón físico' },
+  { modelo: 'iPhone 11 Pro',    cap: '64GB',  grado: 'B+',  usdMin: 265,  usdMax: 265,  usdAvg: 265,  nota: 'Triple cámara, OLED, chip A13' },
+  { modelo: 'iPhone 12',        cap: '128GB', grado: 'A/B+',usdMin: 265,  usdMax: 295,  usdAvg: 280,  nota: '5G, MagSafe, OLED — muy buscado' },
+  { modelo: 'iPhone 12 Pro',    cap: '128GB', grado: 'A/A+',usdMin: 295,  usdMax: 310,  usdAvg: 302,  nota: 'Triple cámara ProRAW, LiDAR, OLED' },
+  { modelo: 'iPhone 13',        cap: '128GB', grado: 'A/A+',usdMin: 325,  usdMax: 375,  usdAvg: 354,  nota: 'Chip A15, mejor batería, notch reducido — el más vendido' },
+  { modelo: 'iPhone 13 Pro',    cap: '128GB', grado: 'A/B+',usdMin: 410,  usdMax: 455,  usdAvg: 426,  nota: 'ProMotion 120Hz, triple cámara, LiDAR' },
+  { modelo: 'iPhone 14 Plus',   cap: '128GB', grado: 'A',   usdMin: 415,  usdMax: 415,  usdAvg: 415,  nota: 'Pantalla grande 6.7" sin Pro, buena batería' },
+  { modelo: 'iPhone 14 Pro Max',cap: '256GB', grado: 'A/A+',usdMin: 620,  usdMax: 650,  usdAvg: 640,  nota: 'Dynamic Island, chip A16, zoom 3x — alta demanda' },
+  { modelo: 'iPhone 15',        cap: '128GB', grado: 'A/A-',usdMin: 470,  usdMax: 490,  usdAvg: 477,  nota: 'USB-C, Dynamic Island, chip A16' },
+  { modelo: 'iPhone 15 Pro Max',cap: '256GB', grado: 'A/A+',usdMin: 690,  usdMax: 790,  usdAvg: 736,  nota: 'Titanio, zoom 5x tetraprismático, chip A17 Pro' },
+  { modelo: 'iPhone 16',        cap: '128GB', grado: 'AA+', usdMin: 655,  usdMax: 655,  usdAvg: 655,  nota: 'Botón Cámara, chip A18, Apple Intelligence' },
+  { modelo: 'iPhone 16 Pro',    cap: '128GB', grado: 'A/A+',usdMin: 765,  usdMax: 765,  usdAvg: 765,  nota: 'Pantalla 6.3" ProMotion, cámara 48MP gran angular' },
+  { modelo: 'iPhone 16 Pro Max',cap: '256GB', grado: 'A/A+',usdMin: 920,  usdMax: 965,  usdAvg: 937,  nota: 'Pantalla 6.9" más grande, zoom 5x, chip A18 Pro' },
+  { modelo: 'iPhone 17 Pro',    cap: '256GB', grado: 'A++', usdMin: 1190, usdMax: 1190, usdAvg: 1190, nota: 'Nuevo — barra de cámara horizontal, chip A19 Pro' },
+];
+
+function renderUsados() {
+  const q = (document.getElementById('usadosSearch')?.value || '').toLowerCase();
+  const margen = parseFloat(document.getElementById('margenSelect')?.value || '0.20');
+  const grid = document.getElementById('usadosGrid');
+  if (!grid) return;
+
+  const filtered = USADOS.filter(u => !q || u.modelo.toLowerCase().includes(q) || u.cap.toLowerCase().includes(q));
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><p>Sin resultados</p></div>';
+    return;
+  }
+
+  // Group by model
+  const groups = {};
+  filtered.forEach(u => {
+    if (!groups[u.modelo]) groups[u.modelo] = [];
+    groups[u.modelo].push(u);
+  });
+
+  grid.innerHTML = Object.entries(groups).map(([modelo, items]) => {
+    const rows = items.map(u => {
+      const ventaMin = Math.round(u.usdMin * TC / 1000) * 1000;
+      const ventaMax = Math.round(u.usdMax * TC / 1000) * 1000;
+      const ventaAvg = Math.round(u.usdAvg * TC / 1000) * 1000;
+      const compraMax = Math.round(ventaAvg * (1 - margen) / 500) * 500;
+      const gananciaEst = ventaAvg - compraMax;
+      const rangoIgual = ventaMin === ventaMax;
+      return `
+        <div style="padding:12px 0;border-bottom:1px solid var(--border);">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:120px;">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+                <span style="font-size:13px;font-weight:600;">${u.cap}</span>
+                <span style="font-size:10px;background:var(--surface);border-radius:5px;padding:1px 6px;color:var(--text-secondary);font-weight:500;">Grado ${u.grado}</span>
+              </div>
+              ${u.nota ? '<div style="font-size:11px;color:var(--text-tertiary);line-height:1.4;">' + u.nota + '</div>' : ''}
+              <div style="margin-top:6px;font-size:11px;color:var(--text-secondary);">
+                Rango catálogo: <strong>U$D ${u.usdMin}${rangoIgual ? '' : ' – U$D ' + u.usdMax}</strong>
+                &nbsp;·&nbsp; Promedio: <strong>U$D ${u.usdAvg}</strong>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:center;flex-shrink:0;">
+              <div style="text-align:center;background:rgba(0,113,227,0.07);border-radius:10px;padding:10px 14px;">
+                <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);margin-bottom:3px;">Tomar hasta</div>
+                <div style="font-size:18px;font-weight:800;color:var(--accent);letter-spacing:-0.3px;">${fARS(compraMax)}</div>
+                <div style="font-size:10px;color:var(--text-tertiary);">U$D ${Math.round(u.usdAvg*(1-margen))} · ${Math.round(margen*100)}% margen</div>
+              </div>
+              <div style="text-align:center;background:var(--surface);border-radius:10px;padding:10px 14px;">
+                <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-secondary);margin-bottom:3px;">Vender (prom.)</div>
+                <div style="font-size:18px;font-weight:800;color:var(--text-primary);letter-spacing:-0.3px;">${fARS(ventaAvg)}</div>
+                <div style="font-size:10px;color:var(--green);font-weight:600;">+${fARS(gananciaEst)} ganancia est.</div>
+              </div>
+            </div>
+          </div>
+          ${!rangoIgual ? '<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;"><div style="font-size:11px;background:var(--surface);border-radius:6px;padding:3px 8px;color:var(--text-secondary);">Mínimo catálogo: <strong>' + fARS(ventaMin) + '</strong></div><div style="font-size:11px;background:var(--surface);border-radius:6px;padding:3px 8px;color:var(--text-secondary);">Máximo catálogo: <strong>' + fARS(ventaMax) + '</strong></div></div>' : ''}
+        </div>`;
+    }).join('');
+
+    return `
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm);">
+        <div style="background:var(--text-primary);padding:12px 16px;display:flex;align-items:center;gap:8px;">
+          <svg width="14" height="14" viewBox="0 0 814 1000" fill="white" style="flex-shrink:0;opacity:.7;"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 376.7 0 248.7 0 124.8 0 56.1 24.7 11.9 68.3 11.9c84.7 0 176.7 106.2 189.8 121.4 26.3 29.9 73.6 77.2 109 77.2s73.2-14.4 104.6-31.5c12.1-6.6 36.5-15.3 63.5-15.3 4.5 0 109 3.1 173.5 69.3z"/></svg>
+          <span style="font-size:14px;font-weight:700;color:white;letter-spacing:-0.2px;">${modelo}</span>
+        </div>
+        <div style="padding:0 16px;">${rows}</div>
+      </div>`;
+  }).join('');
+}
+
+// ─── LOGIN ───
+const PWD_HASH = 'caab204b1759ce00d1017bb1d4e2cb34921aa88a80475966e81ed521a2985883';
+const SESSION_KEY = 'iservice_auth_v1';
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function doLogin() {
+  const pass = document.getElementById('loginPass').value;
+  const hash = await sha256(pass);
+  if (hash === PWD_HASH) {
+    sessionStorage.setItem(SESSION_KEY, '1');
+    document.getElementById('loginOverlay').style.display = 'none';
+    document.getElementById('mobileNav').style.cssText = '';
+  } else {
+    const err = document.getElementById('loginError');
+    err.textContent = 'Contraseña incorrecta. Intentá de nuevo.';
+    document.getElementById('loginPass').value = '';
+    document.getElementById('loginPass').focus();
+    setTimeout(() => { err.textContent = ''; }, 3000);
+  }
+}
+
+function checkAuth() {
+  if (sessionStorage.getItem(SESSION_KEY) === '1') {
+    document.getElementById('loginOverlay').style.display = 'none';
+  } else {
+    // Show login, hide mobile nav
+    document.getElementById('mobileNav').style.display = 'none';
+  }
+}
+
+// ─── MOBILE TAB SWITCH ───
+function switchTabMobile(tab, btn) {
+  document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-tab, .mobile-nav-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  btn.classList.add('active');
+  if (tab === 'tabla') renderTabla();
+  if (tab === 'proveedores') renderProv();
+  if (tab === 'dolar') renderDolarCards();
+  if (tab === 'usados') renderUsados();
+  if (tab === 'stock') renderStockCel();
+  if (tab === 'home') updateHomeStats();
+}
+
+
+// ═══════════════════════════════════════════
+// AGENDA DE TURNOS
+// ═══════════════════════════════════════════
+const AGENDA_KEY = 'iservice_agenda_v1';
+
+function loadAgenda() {
+  try { return JSON.parse(localStorage.getItem(AGENDA_KEY) || '[]'); } catch(e) { return []; }
+}
+function saveAgenda(data) {
+  try { localStorage.setItem(AGENDA_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+function openAgendaModal(id) {
+  // prefill date with today
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('t_fecha').value = today;
+  document.getElementById('t_hora').value = '10:00';
+  ['t_nombre','t_tel','t_servicio','t_obs'].forEach(i => { const el = document.getElementById(i); if(el) el.value = ''; });
+  document.getElementById('t_modelo').value = '';
+  openModal('modal-turno');
+}
+
+function guardarTurno() {
+  const nombre = document.getElementById('t_nombre').value.trim();
+  if (!nombre) { alert('Ingresá el nombre del cliente.'); return; }
+  const turno = {
+    id: Date.now().toString(36),
+    nombre,
+    tel:     document.getElementById('t_tel').value.trim(),
+    modelo:  document.getElementById('t_modelo').value,
+    fecha:   document.getElementById('t_fecha').value,
+    hora:    document.getElementById('t_hora').value,
+    servicio:document.getElementById('t_servicio').value.trim(),
+    obs:     document.getElementById('t_obs').value.trim(),
+    estado:  'pendiente'
+  };
+  const agenda = loadAgenda();
+  agenda.push(turno);
+  // Sort by fecha+hora
+  agenda.sort((a,b) => (a.fecha+a.hora).localeCompare(b.fecha+b.hora));
+  saveAgenda(agenda);
+  closeModal('modal-turno');
+  renderAgenda();
+  updateHomeStats();
+}
+
+function eliminarTurno(id) {
+  const agenda = loadAgenda().filter(t => t.id !== id);
+  saveAgenda(agenda);
+  renderAgenda();
+  updateHomeStats();
+}
+
+function marcarTurnoEstado(id, estado) {
+  const agenda = loadAgenda();
+  const t = agenda.find(x => x.id === id);
+  if (t) { t.estado = estado; saveAgenda(agenda); renderAgenda(); }
+}
+
+function renderAgenda() {
+  const agenda = loadAgenda();
+  const list = document.getElementById('agendaList');
+  const prox = document.getElementById('proximosTurnos');
+  if (!list) return;
+
+  const today = new Date().toISOString().split('T')[0];
+  const upcoming = agenda.filter(t => t.fecha >= today).slice(0, 20);
+  const todayTurnos = agenda.filter(t => t.fecha === today);
+
+  if (agenda.length === 0) {
+    list.innerHTML = '<div class="empty-state" style="padding:24px 12px;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><p style="font-size:12px;">Sin turnos agendados</p></div>';
+  } else {
+    list.innerHTML = agenda.slice(0,8).map(t => agendaItemHTML(t, today)).join('');
+  }
+
+  if (prox) {
+    if (upcoming.length === 0) {
+      prox.innerHTML = '<div class="empty-state" style="padding:20px 12px;"><p style="font-size:12px;">Sin turnos próximos</p></div>';
+    } else {
+      prox.innerHTML = upcoming.slice(0,6).map(t => agendaItemHTML(t, today)).join('');
+    }
+  }
+}
+
+function agendaItemHTML(t, today) {
+  const isToday = t.fecha === today;
+  const isPast  = t.fecha < today;
+  const fechaFmt = t.fecha ? new Date(t.fecha + 'T12:00:00').toLocaleDateString('es-AR', {day:'2-digit',month:'short'}) : '';
+  const timeClass = isPast ? 'past' : isToday ? 'today' : '';
+  const estadoBadge = t.estado === 'completado'
+    ? '<span style="font-size:10px;background:rgba(52,199,89,0.15);color:#1a7a3a;border-radius:5px;padding:1px 6px;font-weight:600;">✓ Listo</span>'
+    : t.estado === 'cancelado'
+    ? '<span style="font-size:10px;background:rgba(255,59,48,0.1);color:var(--red);border-radius:5px;padding:1px 6px;font-weight:600;">Cancelado</span>'
+    : '';
+  return `
+    <div class="agenda-item">
+      <div class="agenda-time ${timeClass}">${t.hora}<br><span style="font-size:9px;font-weight:400;">${fechaFmt}</span></div>
+      <div class="agenda-info">
+        <div class="agenda-cliente">${t.nombre} ${estadoBadge}</div>
+        <div class="agenda-detalle">${t.modelo || ''} ${t.modelo && t.servicio ? '·' : ''} ${t.servicio || ''}</div>
+        ${t.tel ? '<div class="agenda-detalle">📞 ' + t.tel + '</div>' : ''}
+      </div>
+      <div style="display:flex;gap:4px;flex-shrink:0;">
+        ${t.estado !== 'completado' ? '<button onclick="marcarTurnoEstado(\'' + t.id + '\',\'completado\')" title="Marcar listo" style="background:none;border:none;cursor:pointer;font-size:16px;">✅</button>' : ''}
+        <button class="agenda-del" onclick="eliminarTurno('${t.id}')" title="Eliminar">✕</button>
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════
+// STOCK DE CELULARES
+// ═══════════════════════════════════════════
+const STOCK_CEL_KEY = 'iservice_stock_cel_v1';
+let tempStockReps = []; // temp reparaciones en modal
+
+function loadStockCel() {
+  try { return JSON.parse(localStorage.getItem(STOCK_CEL_KEY) || '[]'); } catch(e) { return []; }
+}
+function saveStockCel(data) {
+  try { localStorage.setItem(STOCK_CEL_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+function openStockModal(editId) {
+  tempStockReps = [];
+  document.getElementById('stockModalTitle').textContent = editId ? 'EDITAR EQUIPO' : 'AGREGAR EQUIPO';
+  document.getElementById('stock_edit_id').value = editId || '';
+
+  if (editId) {
+    const eq = loadStockCel().find(e => e.id === editId);
+    if (eq) {
+      document.getElementById('sc_modelo').value  = eq.modelo || '';
+      document.getElementById('sc_color').value   = eq.color || '';
+      document.getElementById('sc_imei').value    = eq.imei || '';
+      document.getElementById('sc_estado').value  = eq.estado || 'A';
+      document.getElementById('sc_compra').value  = eq.compra || '';
+      document.getElementById('sc_venta').value   = eq.venta || '';
+      document.getElementById('sc_bateria').value = eq.bateria || '';
+      tempStockReps = eq.reps ? [...eq.reps] : [];
+    }
+  } else {
+    ['sc_modelo','sc_color','sc_imei','sc_compra','sc_venta','sc_bateria'].forEach(id => {
+      const el = document.getElementById(id); if(el) el.value = '';
+    });
+    document.getElementById('sc_estado').value = 'A';
+    tempStockReps = [];
+  }
+  renderTempReps();
+  calcStockGanancia();
+  openModal('modal-stock-cel');
+}
+
+function addStockRep() {
+  const desc  = document.getElementById('sc_rep_desc').value.trim();
+  const costo = parseFloat(document.getElementById('sc_rep_costo').value) || 0;
+  if (!desc || costo <= 0) return;
+  tempStockReps.push({ desc, costo });
+  document.getElementById('sc_rep_desc').value  = '';
+  document.getElementById('sc_rep_costo').value = '';
+  renderTempReps();
+  calcStockGanancia();
+}
+
+function removeStockRep(idx) {
+  tempStockReps.splice(idx, 1);
+  renderTempReps();
+  calcStockGanancia();
+}
+
+function renderTempReps() {
+  const el = document.getElementById('sc_reps_list');
+  if (!el) return;
+  el.innerHTML = tempStockReps.map((r,i) => `
+    <div class="sc-rep-row">
+      <span>${r.desc}</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-weight:600;">${fARS(r.costo)}</span>
+        <button onclick="removeStockRep(${i})" style="background:none;border:none;color:var(--text-tertiary);cursor:pointer;font-size:14px;">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function calcStockGanancia() {
+  const compra = parseFloat(document.getElementById('sc_compra')?.value) || 0;
+  const venta  = parseFloat(document.getElementById('sc_venta')?.value)  || 0;
+  const totalReps = tempStockReps.reduce((s,r) => s+r.costo, 0);
+  const costoTotal = compra + totalReps;
+  const ganancia   = venta - costoTotal;
+  const el_c = document.getElementById('slt_costo');
+  const el_v = document.getElementById('slt_venta');
+  const el_g = document.getElementById('slt_gan');
+  if (el_c) el_c.textContent = fARS(costoTotal);
+  if (el_v) el_v.textContent = fARS(venta);
+  if (el_g) { el_g.textContent = fARS(ganancia); el_g.style.color = ganancia >= 0 ? '#34d058' : '#ff453a'; }
+}
+
+function guardarStockCel() {
+  const modelo = document.getElementById('sc_modelo').value;
+  if (!modelo) { alert('Seleccioná el modelo.'); return; }
+  const compra = parseFloat(document.getElementById('sc_compra').value) || 0;
+  const venta  = parseFloat(document.getElementById('sc_venta').value)  || 0;
+  const totalReps = tempStockReps.reduce((s,r) => s+r.costo, 0);
+
+  const equipo = {
+    id:      document.getElementById('stock_edit_id').value || Date.now().toString(36),
+    modelo,
+    color:   document.getElementById('sc_color').value.trim(),
+    imei:    document.getElementById('sc_imei').value.trim(),
+    estado:  document.getElementById('sc_estado').value,
+    compra,
+    venta,
+    bateria: document.getElementById('sc_bateria').value.trim(),
+    reps:    [...tempStockReps],
+    costoTotal: compra + totalReps,
+    ganancia:   venta - (compra + totalReps),
+    fechaIngreso: new Date().toLocaleDateString('es-AR'),
+    vendido: false,
+  };
+
+  const stock = loadStockCel();
+  const idx = stock.findIndex(e => e.id === equipo.id);
+  if (idx >= 0) stock[idx] = equipo;
+  else stock.push(equipo);
+  saveStockCel(stock);
+  closeModal('modal-stock-cel');
+  renderStockCel();
+  updateHomeStats();
+}
+
+function eliminarStockCel(id) {
+  if (!confirm('¿Eliminar este equipo del stock?')) return;
+  saveStockCel(loadStockCel().filter(e => e.id !== id));
+  renderStockCel();
+  updateHomeStats();
+}
+
+function marcarVendido(id) {
+  const stock = loadStockCel();
+  const eq = stock.find(e => e.id === id);
+  if (eq) { eq.vendido = !eq.vendido; saveStockCel(stock); renderStockCel(); updateHomeStats(); }
+}
+
+function renderStockCel() {
+  const stock = loadStockCel();
+  const list  = document.getElementById('stockList');
+  if (!list) return;
+
+  // Stats
+  const activos = stock.filter(e => !e.vendido);
+  const totInv  = activos.reduce((s,e) => s + (e.costoTotal||0), 0);
+  const totVenta = activos.reduce((s,e) => s + (e.venta||0), 0);
+  const totGan   = activos.reduce((s,e) => s + (e.ganancia||0), 0);
+  const setEl = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
+  setEl('ss-qty',  stock.length);
+  setEl('ss-inv',  fARS(totInv));
+  setEl('ss-venta',fARS(totVenta));
+  setEl('ss-gan',  fARS(totGan));
+
+  if (stock.length === 0) {
+    list.innerHTML = '<div class="empty-state" style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:60px;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg><p>Sin equipos en stock. Agregá uno.</p></div>';
+    return;
+  }
+
+  list.innerHTML = stock.map(eq => {
+    const repsHTML = eq.reps && eq.reps.length > 0
+      ? '<div class="stock-rep-list">' + eq.reps.map(r => `<span class="stock-rep-chip">🔧 ${r.desc} · ${fARS(r.costo)}</span>`).join('') + '</div>'
+      : '';
+    const vendidoBadge = eq.vendido ? '<span class="stock-badge stock-badge-vendido">Vendido</span>' : '<span class="stock-badge stock-badge-venta">En venta</span>';
+    return `
+      <div class="stock-cel-card" style="${eq.vendido ? 'opacity:.65;' : ''}">
+        <div class="stock-cel-header">
+          <div>
+            <div class="stock-cel-model">${eq.modelo}</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">${eq.color || ''} ${eq.imei ? '· IMEI: '+eq.imei : ''} ${eq.bateria ? '· 🔋 '+eq.bateria : ''}</div>
+          </div>
+          <div class="stock-cel-badges">
+            <span class="stock-badge stock-badge-grade">Grado ${eq.estado}</span>
+            ${vendidoBadge}
+            <span style="font-size:11px;color:var(--text-tertiary);">${eq.fechaIngreso||''}</span>
+          </div>
+        </div>
+        <div class="stock-cel-body">
+          <div class="stock-cel-nums">
+            <div class="stock-num-cell"><div class="stock-num-label">Compra</div><div class="stock-num-val">${fARS(eq.compra)}</div></div>
+            <div class="stock-num-cell"><div class="stock-num-label">Reparaciones</div><div class="stock-num-val accent">${fARS(eq.reps ? eq.reps.reduce((s,r)=>s+r.costo,0) : 0)}</div></div>
+            <div class="stock-num-cell"><div class="stock-num-label">Costo total</div><div class="stock-num-val">${fARS(eq.costoTotal)}</div></div>
+            <div class="stock-num-cell"><div class="stock-num-label">Venta · ganancia</div><div class="stock-num-val green">${fARS(eq.venta)} <span style="font-size:11px;font-weight:400;color:var(--green);">(+${fARS(eq.ganancia)})</span></div></div>
+          </div>
+          ${repsHTML}
+          <div class="stock-cel-actions">
+            <button class="btn-edit-sm" onclick="openStockModal('${eq.id}')">✏️ Editar</button>
+            <button class="btn-edit-sm" onclick="marcarVendido('${eq.id}')">${eq.vendido ? '↩ Desmarcar vendido' : '✅ Marcar vendido'}</button>
+            <button class="btn-del-sm" onclick="eliminarStockCel('${eq.id}')">🗑 Eliminar</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── HOME STATS ──
+function updateHomeStats() {
+  const agenda = loadAgenda();
+  const stock  = loadStockCel();
+  const today  = new Date().toISOString().split('T')[0];
+  const turnosHoy = agenda.filter(t => t.fecha === today).length;
+  const activos   = stock.filter(e => !e.vendido);
+  const inversion = activos.reduce((s,e) => s + (e.costoTotal||0), 0);
+  const ganancia  = activos.reduce((s,e) => s + (e.ganancia||0), 0);
+
+  const setEl = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
+  setEl('hs-turnos',   turnosHoy);
+  setEl('hs-stock',    activos.length);
+  setEl('hs-inversion', fARS(inversion));
+  setEl('hs-ganancia',  fARS(ganancia));
+
+  renderAgenda();
+}
+
+// ── AGENDA MODAL INIT ──
+function initAgendaModelos() {
+  const sel = document.getElementById('t_modelo');
+  if (!sel) return;
+  Object.keys(RAW.modelos).forEach(m => {
+    sel.innerHTML += `<option value="${m}">${m}</option>`;
+  });
+}
+
+function initStockModelos() {
+  const sel = document.getElementById('sc_modelo');
+  if (!sel) return;
+  Object.keys(RAW.modelos).forEach(m => {
+    sel.innerHTML += `<option value="${m}">${m}</option>`;
+  });
+}
+
+// ── OPEN/CLOSE MODAL ──
+function openModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('open');
+}
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('open');
+}
+// Close on overlay click
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('modal-overlay')) {
+    e.target.classList.remove('open');
+  }
+});
+
+
+// ─── INIT ───
+function init() {
+  const selMod = document.getElementById('selModelo');
+  const filtMod = document.getElementById('tablaModelFilter');
+  Object.keys(RAW.modelos).forEach(m => {
+    selMod.innerHTML += `<option value="${m}">${m}</option>`;
+    filtMod.innerHTML += `<option value="${m}">${m}</option>`;
+  });
+  renderTabla();
+  renderProv();
+  fetchDolar();
+  initRemitoModelos();
+  initAgendaModelos();
+  initStockModelos();
+  renderAgenda();
+  renderStockCel();
+  updateHomeStats();
+  checkAuth();
+  // Refresh dolar every 5 min
+  setInterval(fetchDolar, 300000);
+}
+
+init();
+</script>
+</body>
+</html>
