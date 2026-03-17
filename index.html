@@ -1604,6 +1604,23 @@ select.ri { appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmln
 
 </head>
 <body>
+<script>
+function doLogin() {
+  var pass = document.getElementById('loginPass').value;
+  var err  = document.getElementById('loginError');
+  if (pass === '7127') {
+    try { sessionStorage.setItem('iservice_ok','1'); } catch(e) {}
+    var ov = document.getElementById('loginOverlay');
+    if (ov) ov.style.display = 'none';
+    var mn = document.getElementById('mobileNav');
+    if (mn) mn.style.cssText = '';
+  } else {
+    if (err) { err.textContent = 'Contraseña incorrecta.'; setTimeout(function(){ err.textContent=''; },3000); }
+    var inp = document.getElementById('loginPass');
+    if (inp) { inp.value = ''; inp.focus(); }
+  }
+}
+</script>
 
 <div id="loginOverlay">
   <div class="login-card">
@@ -2701,74 +2718,39 @@ function renderUsados() {
 }
 
 // ─── LOGIN ───
-const PWD_HASH = 'caab204b1759ce00d1017bb1d4e2cb34921aa88a80475966e81ed521a2985883';
-const SESSION_KEY = 'iservice_auth_v1';
-
-// Simple hash que funciona en file:// y HTTPS
-function simpleHash(str) {
-  // djb2 + extras — no criptográfico pero suficiente para uso personal
-  let h1 = 5381, h2 = 52711;
-  for (let i = 0; i < str.length; i++) {
-    const c = str.charCodeAt(i);
-    h1 = ((h1 << 5) + h1) ^ c;
-    h2 = ((h2 << 5) + h2) ^ c;
-  }
-  return (((h1 >>> 0) * 4096) + (h2 >>> 0)).toString(16).padStart(16,'0');
-}
-
-// SHA-256 con fallback a simpleHash si crypto no está disponible
-async function sha256(str) {
-  try {
-    if (window.crypto && window.crypto.subtle) {
-      const buf = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-    }
-  } catch(e) {}
-  // Fallback: comparar directamente con contraseña en texto (solo local)
-  return str;
-}
-
-async function doLogin() {
-  const pass = document.getElementById('loginPass').value;
-  if (!pass) return;
-
-  let ok = false;
-
-  // Intento 1: SHA-256 (GitHub Pages / HTTPS)
-  try {
-    if (window.crypto && window.crypto.subtle) {
-      const hash = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(pass));
-      const hex = Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
-      if (hex === PWD_HASH) ok = true;
-    }
-  } catch(e) {}
-
-  // Intento 2: contraseña directa (fallback para file://)
-  if (!ok && pass === 'iservice2026') ok = true;
-
-  if (ok) {
-    try { sessionStorage.setItem(SESSION_KEY, '1'); } catch(e) {}
-    document.getElementById('loginOverlay').style.display = 'none';
-    const mn = document.getElementById('mobileNav');
-    if (mn) mn.style.display = '';
+// ─── LOGIN SIMPLE ───
+function doLogin() {
+  var pass = document.getElementById('loginPass').value;
+  var err  = document.getElementById('loginError');
+  if (pass === '7127') {
+    try { sessionStorage.setItem('iservice_ok', '1'); } catch(e) {}
+    var ov = document.getElementById('loginOverlay');
+    if (ov) ov.style.display = 'none';
+    var mn = document.getElementById('mobileNav');
+    if (mn) mn.style.cssText = '';
+    // update sync dot if available
+    var dot = document.getElementById('syncDot');
+    var lbl = document.getElementById('syncLabel');
+    if (dot) dot.style.background = '#34c759';
+    if (lbl) lbl.textContent = 'Conectado';
   } else {
-    const err = document.getElementById('loginError');
     if (err) {
-      err.textContent = 'Contraseña incorrecta. Intentá de nuevo.';
-      setTimeout(() => { err.textContent = ''; }, 3000);
+      err.textContent = 'Contraseña incorrecta.';
+      setTimeout(function(){ if(err) err.textContent = ''; }, 3000);
     }
-    document.getElementById('loginPass').value = '';
-    document.getElementById('loginPass').focus();
+    var inp = document.getElementById('loginPass');
+    if (inp) { inp.value = ''; inp.focus(); }
   }
 }
 
 function checkAuth() {
-  let authed = false;
-  try { authed = sessionStorage.getItem(SESSION_KEY) === '1'; } catch(e) {}
-  const overlay = document.getElementById('loginOverlay');
-  const mn = document.getElementById('mobileNav');
+  var authed = false;
+  try { authed = sessionStorage.getItem('iservice_ok') === '1'; } catch(e) {}
+  var overlay = document.getElementById('loginOverlay');
+  var mn = document.getElementById('mobileNav');
   if (authed) {
     if (overlay) overlay.style.display = 'none';
+    if (mn) mn.style.cssText = '';
   } else {
     if (overlay) overlay.style.display = 'flex';
     if (mn) mn.style.display = 'none';
