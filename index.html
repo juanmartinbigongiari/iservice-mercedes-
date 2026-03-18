@@ -1353,130 +1353,99 @@ select.ri { appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmln
 
 </style>
 
-<!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ─── SUPABASE CONFIG ───
-const _SB_URL = 'https://mnkyybxmjfcilbtwzpog.supabase.co';
-const _SB_KEY = 'sb_publishable_76FRdMQgqQ_z6WOu2n-6lw_dlgFTN6m';
-const _sb = supabase.createClient(_SB_URL, _SB_KEY);
+var _sb = supabase.createClient('https://mnkyybxmjfcilbtwzpog.supabase.co', 'sb_publishable_76FRdMQgqQ_z6WOu2n-6lw_dlgFTN6m');
 
-// ─── SYNC STATUS ───
-function setSyncStatus(status, text) {
-  const dot = document.querySelector('.dolar-dot');
-  const pill = document.querySelector('.dolar-pill');
-  if (!pill) return;
-  // Add sync indicator next to dolar pill
-  let syncEl = document.getElementById('syncStatus');
-  if (!syncEl) {
-    syncEl = document.createElement('div');
-    syncEl.id = 'syncStatus';
-    syncEl.style.cssText = 'display:flex;align-items:center;gap:5px;font-size:11px;font-weight:500;';
-    pill.parentNode.insertBefore(syncEl, pill);
+// Sync indicator
+function setSyncDot(color, text) {
+  var el = document.getElementById('syncDot');
+  if (!el) {
+    var nav = document.querySelector('.nav');
+    if (nav) {
+      el = document.createElement('span');
+      el.id = 'syncDot';
+      el.style.cssText = 'font-size:11px;font-weight:500;color:#6e6e73;display:flex;align-items:center;gap:4px;white-space:nowrap;';
+      nav.appendChild(el);
+    }
   }
-  const colors = { ok:'#34c759', syncing:'#ff9f0a', error:'#ff3b30', offline:'#aeaeb2' };
-  syncEl.innerHTML = `<span style="width:7px;height:7px;border-radius:50%;background:${colors[status]||colors.offline};display:inline-block;"></span><span style="color:#6e6e73">${text}</span>`;
+  if (el) el.innerHTML = '<span style="width:7px;height:7px;border-radius:50%;background:'+color+';display:inline-block;flex-shrink:0;"></span> '+text;
 }
 
-// ─── AGENDA ───
+// ── AGENDA ──
 async function sbLoadAgenda() {
   try {
-    const { data, error } = await _sb.from('agenda').select('*').order('fecha').order('hora');
-    if (error) throw error;
-    return data || [];
-  } catch(e) { console.warn('Supabase agenda:', e); return loadAgendaLocal(); }
+    var r = await _sb.from('agenda').select('*').order('fecha').order('hora');
+    if (r.error) throw r.error;
+    return r.data || [];
+  } catch(e) { return loadAgendaLocal(); }
 }
-
-async function sbSaveAgendaItem(turno) {
-  try {
-    const { error } = await _sb.from('agenda').upsert(turno);
-    if (error) throw error;
-    setSyncStatus('ok', 'Guardado ✓');
-    setTimeout(()=>setSyncStatus('ok','Sincronizado'), 2000);
-  } catch(e) { console.warn('sbSaveAgenda:', e); saveAgendaLocal(turno); }
+async function sbSaveAgendaItem(t) {
+  try { await _sb.from('agenda').upsert(t); setSyncDot('#34c759','Guardado ✓'); setTimeout(function(){setSyncDot('#34c759','Sincronizado');},2000); }
+  catch(e) { saveAgendaLocal(t); setSyncDot('#ff3b30','Sin conexión'); }
 }
-
 async function sbDeleteAgendaItem(id) {
-  try {
-    const { error } = await _sb.from('agenda').delete().eq('id', id);
-    if (error) throw error;
-  } catch(e) { console.warn('sbDeleteAgenda:', e); }
+  try { await _sb.from('agenda').delete().eq('id',id); } catch(e) {}
 }
 
-// ─── REMITOS ───
-async function sbSaveRemito(remito) {
-  try {
-    setSyncStatus('syncing', 'Guardando...');
-    const row = { ...remito, checks: JSON.stringify(remito.checks) };
-    const { error } = await _sb.from('remitos').upsert(row);
-    if (error) throw error;
-    setSyncStatus('ok', 'Remito guardado ✓');
-    setTimeout(()=>setSyncStatus('ok','Sincronizado'), 2500);
-    return true;
-  } catch(e) { console.warn('sbSaveRemito:', e); setSyncStatus('error','Sin conexión'); return false; }
-}
-
-async function sbLoadRemitos() {
-  try {
-    const { data, error } = await _sb.from('remitos').select('*').order('created_at', {ascending:false});
-    if (error) throw error;
-    return (data||[]).map(r => ({ ...r, checks: typeof r.checks === 'string' ? JSON.parse(r.checks) : (r.checks||[]) }));
-  } catch(e) { console.warn('sbLoadRemitos:', e); return []; }
-}
-
-async function sbDeleteRemito(id) {
-  try {
-    const { error } = await _sb.from('remitos').delete().eq('id', id);
-    if (error) throw error;
-    setSyncStatus('ok', 'Eliminado');
-  } catch(e) { console.warn('sbDeleteRemito:', e); }
-}
-
-// ─── STOCK CEL ───
+// ── STOCK CEL ──
 async function sbLoadStockCel() {
   try {
-    const { data, error } = await _sb.from('stock_cel').select('*').order('created_at', {ascending:false});
-    if (error) throw error;
-    return (data||[]).map(r => ({ ...r, reparaciones: typeof r.reparaciones === 'string' ? JSON.parse(r.reparaciones||'[]') : (r.reparaciones||[]) }));
-  } catch(e) { console.warn('sbLoadStockCel:', e); return loadStockCelLocal(); }
+    var r = await _sb.from('stock_cel').select('*').order('created_at',{ascending:false});
+    if (r.error) throw r.error;
+    return (r.data||[]).map(function(x){ return Object.assign(x,{reparaciones: typeof x.reparaciones==='string'?JSON.parse(x.reparaciones||'[]'):(x.reparaciones||[])}); });
+  } catch(e) { return loadStockCelLocal(); }
 }
-
-async function sbSaveStockCelItem(equipo) {
+async function sbSaveStockCelItem(eq) {
   try {
-    setSyncStatus('syncing', 'Guardando...');
-    const row = { ...equipo, reparaciones: JSON.stringify(equipo.reparaciones||[]) };
-    const { error } = await _sb.from('stock_cel').upsert(row);
-    if (error) throw error;
-    setSyncStatus('ok', 'Guardado ✓');
-    setTimeout(()=>setSyncStatus('ok','Sincronizado'), 2000);
-  } catch(e) { console.warn('sbSaveStockCel:', e); saveStockCelLocal(equipo); }
+    var row = Object.assign({},eq,{reparaciones:JSON.stringify(eq.reparaciones||[])});
+    await _sb.from('stock_cel').upsert(row);
+    setSyncDot('#34c759','Guardado ✓');
+    setTimeout(function(){setSyncDot('#34c759','Sincronizado');},2000);
+  } catch(e) { saveStockCelLocal(eq); setSyncDot('#ff3b30','Sin conexión'); }
 }
-
 async function sbDeleteStockCelItem(id) {
-  try {
-    const { error } = await _sb.from('stock_cel').delete().eq('id', id);
-    if (error) throw error;
-  } catch(e) { console.warn('sbDeleteStockCel:', e); }
+  try { await _sb.from('stock_cel').delete().eq('id',id); } catch(e) {}
 }
 
-// ─── LOCAL FALLBACKS ───
-const AGENDA_LOCAL_KEY = 'iservice_agenda_v1';
-const STOCK_CEL_LOCAL_KEY = 'iservice_stock_cel_v1';
-function loadAgendaLocal() { try { return JSON.parse(localStorage.getItem(AGENDA_LOCAL_KEY)||'[]'); } catch(e) { return []; } }
-function saveAgendaLocal(turno) { try { const a=loadAgendaLocal(); const i=a.findIndex(x=>x.id===turno.id); if(i>=0) a[i]=turno; else a.push(turno); localStorage.setItem(AGENDA_LOCAL_KEY,JSON.stringify(a)); } catch(e) {} }
-function loadStockCelLocal() { try { return JSON.parse(localStorage.getItem(STOCK_CEL_LOCAL_KEY)||'[]'); } catch(e) { return []; } }
-function saveStockCelLocal(eq) { try { const a=loadStockCelLocal(); const i=a.findIndex(x=>x.id===eq.id); if(i>=0) a[i]=eq; else a.push(eq); localStorage.setItem(STOCK_CEL_LOCAL_KEY,JSON.stringify(a)); } catch(e) {} }
-
-// Test connection on load
-window.addEventListener('load', async () => {
-  setSyncStatus('syncing', 'Conectando...');
+// ── REMITOS ──
+async function sbSaveRemito(rem) {
   try {
-    const { error } = await _sb.from('agenda').select('count', {count:'exact',head:true});
-    if (error) throw error;
-    setSyncStatus('ok', 'Sincronizado');
-  } catch(e) {
-    setSyncStatus('offline', 'Sin conexión');
-  }
+    setSyncDot('#ff9f0a','Guardando...');
+    var row = Object.assign({},rem,{checks:JSON.stringify(rem.checks||[])});
+    var r = await _sb.from('remitos').upsert(row);
+    if (r.error) throw r.error;
+    setSyncDot('#34c759','Remito guardado ✓');
+    setTimeout(function(){setSyncDot('#34c759','Sincronizado');},2500);
+    return true;
+  } catch(e) { setSyncDot('#ff3b30','Sin conexión'); return false; }
+}
+async function sbLoadRemitos() {
+  try {
+    var r = await _sb.from('remitos').select('*').order('created_at',{ascending:false});
+    if (r.error) throw r.error;
+    return (r.data||[]).map(function(x){ return Object.assign(x,{checks:typeof x.checks==='string'?JSON.parse(x.checks||'[]'):(x.checks||[])}); });
+  } catch(e) { return []; }
+}
+async function sbDeleteRemito(id) {
+  try { await _sb.from('remitos').delete().eq('id',id); } catch(e) {}
+}
+
+// ── LOCAL FALLBACKS ──
+function loadAgendaLocal() { try { return JSON.parse(localStorage.getItem('iservice_agenda_v1')||'[]'); } catch(e) { return []; } }
+function saveAgendaLocal(t) { try { var a=loadAgendaLocal(); var i=a.findIndex(function(x){return x.id===t.id;}); if(i>=0) a[i]=t; else a.push(t); localStorage.setItem('iservice_agenda_v1',JSON.stringify(a)); } catch(e) {} }
+function loadStockCelLocal() { try { return JSON.parse(localStorage.getItem('iservice_stock_cel_v1')||'[]'); } catch(e) { return []; } }
+function saveStockCelLocal(eq) { try { var a=loadStockCelLocal(); var i=a.findIndex(function(x){return x.id===eq.id;}); if(i>=0) a[i]=eq; else a.push(eq); localStorage.setItem('iservice_stock_cel_v1',JSON.stringify(a)); } catch(e) {} }
+
+// Test connection
+window.addEventListener('load', function() {
+  setTimeout(async function() {
+    try {
+      var r = await _sb.from('agenda').select('count',{count:'exact',head:true});
+      if (r.error) throw r.error;
+      setSyncDot('#34c759','Sincronizado');
+    } catch(e) { setSyncDot('#aeaeb2','Sin conexión'); }
+  }, 1500);
 });
 </script>
 
@@ -1490,7 +1459,7 @@ window.addEventListener('load', async () => {
     </div>
     <div class="login-title">iService.Mercedes</div>
     <div class="login-sub">Sistema de Gestión · Acceso privado</div>
-    <input class="login-input" type="password" id="loginPass" onkeydown="if(event.key==='Enter') doLogin()" placeholder="Contraseña" autocomplete="current-password"
+    <input class="login-input" type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password"
       onkeydown="if(event.key==='Enter') doLogin()">
     <button class="login-btn" onclick="doLogin()">Ingresar</button>
     <div class="login-error" id="loginError"></div>
@@ -2555,31 +2524,14 @@ var _ISM_KEY = 'ism_v1';
 
 function doLogin() {
   var pass = document.getElementById('loginPass').value;
-  var ok = (pass === '7127');
-
-  // also try SHA256 for HTTPS
-  if (!ok && window.crypto && window.crypto.subtle) {
-    window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(pass))
-      .then(function(buf) {
-        var hex = Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
-        if (hex === 'c98a4af1036b3f69a1918c9d3a8e4bfc0dd5d491060d63088a8f6cfde4500091') {
-          try { sessionStorage.setItem(_ISM_KEY,'1'); } catch(e) {}
-          document.getElementById('loginOverlay').style.display = 'none';
-          var mn = document.getElementById('mobileNav');
-          if (mn) mn.style.cssText = '';
-        }
-      }).catch(function() {});
-    return;
-  }
-
-  if (ok) {
+  if (pass === '7127') {
     try { sessionStorage.setItem(_ISM_KEY,'1'); } catch(e) {}
     document.getElementById('loginOverlay').style.display = 'none';
     var mn = document.getElementById('mobileNav');
     if (mn) mn.style.cssText = '';
   } else {
     var err = document.getElementById('loginError');
-    if (err) { err.textContent = 'Contraseña incorrecta.'; setTimeout(function(){ if(err) err.textContent=''; }, 3000); }
+    if (err) { err.textContent = 'Contraseña incorrecta.'; setTimeout(function(){ if(err) err.textContent=''; },3000); }
     document.getElementById('loginPass').value = '';
     document.getElementById('loginPass').focus();
   }
@@ -2587,7 +2539,7 @@ function doLogin() {
 
 function checkAuth() {
   var ok = false;
-  try { ok = sessionStorage.getItem(_ISM_KEY) === '1'; } catch(e) {}
+  try { ok = sessionStorage.getItem(_ISM_KEY)==='1'; } catch(e) {}
   var ov = document.getElementById('loginOverlay');
   var mn = document.getElementById('mobileNav');
   if (ok) {
@@ -2642,29 +2594,29 @@ async function guardarTurno() {
   const turno = {
     id: Date.now().toString(36),
     nombre,
-    tel:      document.getElementById('t_tel').value.trim(),
-    modelo:   document.getElementById('t_modelo').value,
-    fecha:    document.getElementById('t_fecha').value,
-    hora:     document.getElementById('t_hora').value,
-    servicio: document.getElementById('t_servicio').value.trim(),
-    obs:      document.getElementById('t_obs').value.trim(),
-    estado:   'pendiente'
+    tel:     document.getElementById('t_tel').value.trim(),
+    modelo:  document.getElementById('t_modelo').value,
+    fecha:   document.getElementById('t_fecha').value,
+    hora:    document.getElementById('t_hora').value,
+    servicio:document.getElementById('t_servicio').value.trim(),
+    obs:     document.getElementById('t_obs').value.trim(),
+    estado:  'pendiente'
   };
   await sbSaveAgendaItem(turno);
   closeModal('modal-turno');
-  await renderAgenda();
+  renderAgenda();
   updateHomeStats();
 }
 
 async function eliminarTurno(id) {
   await sbDeleteAgendaItem(id);
-  await renderAgenda();
+  renderAgenda();
   updateHomeStats();
 }
 
 async function marcarTurnoEstado(id, estado) {
-  await sbSaveAgendaItem({ id, estado });
-  await renderAgenda();
+  await sbSaveAgendaItem({ id: id, estado: estado });
+  renderAgenda();
 }
 
 async function renderAgenda() {
@@ -2832,10 +2784,10 @@ async function guardarStockCel() {
   updateHomeStats();
 }
 
-async function eliminarStockCel(id) {
+function eliminarStockCel(id) {
   if (!confirm('¿Eliminar este equipo del stock?')) return;
-  await sbDeleteStockCelItem(id);
-  await renderStockCel();
+  saveStockCel(loadStockCel().filter(e => e.id !== id));
+  renderStockCel();
   updateHomeStats();
 }
 
@@ -2963,7 +2915,7 @@ function actualizarBackupStats() {
   `;
 }
 
-function exportarDatos() {
+async function exportarDatos() {
   const datos = {
     version: '1.0',
     fecha: new Date().toISOString(),
@@ -3058,8 +3010,8 @@ function procesarImport(texto) {
 
     if (!confirm(msg)) return;
 
-    if (datos.agenda)   { datos.agenda.forEach(t => sbSaveAgendaItem(t)); }
-    if (datos.stockCel) { datos.stockCel.forEach(e => sbSaveStockCelItem(e)); }
+    if (datos.agenda)   datos.agenda.forEach(function(t){ sbSaveAgendaItem(t); });
+    if (datos.stockCel) datos.stockCel.forEach(function(e){ sbSaveStockCelItem(e); });
 
     // Refresh UI
     renderAgenda();
