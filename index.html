@@ -1352,6 +1352,134 @@ select.ri { appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmln
 .backup-info strong { color: var(--text-primary); }
 
 </style>
+
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ─── SUPABASE CONFIG ───
+const _SB_URL = 'https://mnkyybxmjfcilbtwzpog.supabase.co';
+const _SB_KEY = 'sb_publishable_76FRdMQgqQ_z6WOu2n-6lw_dlgFTN6m';
+const _sb = supabase.createClient(_SB_URL, _SB_KEY);
+
+// ─── SYNC STATUS ───
+function setSyncStatus(status, text) {
+  const dot = document.querySelector('.dolar-dot');
+  const pill = document.querySelector('.dolar-pill');
+  if (!pill) return;
+  // Add sync indicator next to dolar pill
+  let syncEl = document.getElementById('syncStatus');
+  if (!syncEl) {
+    syncEl = document.createElement('div');
+    syncEl.id = 'syncStatus';
+    syncEl.style.cssText = 'display:flex;align-items:center;gap:5px;font-size:11px;font-weight:500;';
+    pill.parentNode.insertBefore(syncEl, pill);
+  }
+  const colors = { ok:'#34c759', syncing:'#ff9f0a', error:'#ff3b30', offline:'#aeaeb2' };
+  syncEl.innerHTML = `<span style="width:7px;height:7px;border-radius:50%;background:${colors[status]||colors.offline};display:inline-block;"></span><span style="color:#6e6e73">${text}</span>`;
+}
+
+// ─── AGENDA ───
+async function sbLoadAgenda() {
+  try {
+    const { data, error } = await _sb.from('agenda').select('*').order('fecha').order('hora');
+    if (error) throw error;
+    return data || [];
+  } catch(e) { console.warn('Supabase agenda:', e); return loadAgendaLocal(); }
+}
+
+async function sbSaveAgendaItem(turno) {
+  try {
+    const { error } = await _sb.from('agenda').upsert(turno);
+    if (error) throw error;
+    setSyncStatus('ok', 'Guardado ✓');
+    setTimeout(()=>setSyncStatus('ok','Sincronizado'), 2000);
+  } catch(e) { console.warn('sbSaveAgenda:', e); saveAgendaLocal(turno); }
+}
+
+async function sbDeleteAgendaItem(id) {
+  try {
+    const { error } = await _sb.from('agenda').delete().eq('id', id);
+    if (error) throw error;
+  } catch(e) { console.warn('sbDeleteAgenda:', e); }
+}
+
+// ─── REMITOS ───
+async function sbSaveRemito(remito) {
+  try {
+    setSyncStatus('syncing', 'Guardando...');
+    const row = { ...remito, checks: JSON.stringify(remito.checks) };
+    const { error } = await _sb.from('remitos').upsert(row);
+    if (error) throw error;
+    setSyncStatus('ok', 'Remito guardado ✓');
+    setTimeout(()=>setSyncStatus('ok','Sincronizado'), 2500);
+    return true;
+  } catch(e) { console.warn('sbSaveRemito:', e); setSyncStatus('error','Sin conexión'); return false; }
+}
+
+async function sbLoadRemitos() {
+  try {
+    const { data, error } = await _sb.from('remitos').select('*').order('created_at', {ascending:false});
+    if (error) throw error;
+    return (data||[]).map(r => ({ ...r, checks: typeof r.checks === 'string' ? JSON.parse(r.checks) : (r.checks||[]) }));
+  } catch(e) { console.warn('sbLoadRemitos:', e); return []; }
+}
+
+async function sbDeleteRemito(id) {
+  try {
+    const { error } = await _sb.from('remitos').delete().eq('id', id);
+    if (error) throw error;
+    setSyncStatus('ok', 'Eliminado');
+  } catch(e) { console.warn('sbDeleteRemito:', e); }
+}
+
+// ─── STOCK CEL ───
+async function sbLoadStockCel() {
+  try {
+    const { data, error } = await _sb.from('stock_cel').select('*').order('created_at', {ascending:false});
+    if (error) throw error;
+    return (data||[]).map(r => ({ ...r, reparaciones: typeof r.reparaciones === 'string' ? JSON.parse(r.reparaciones||'[]') : (r.reparaciones||[]) }));
+  } catch(e) { console.warn('sbLoadStockCel:', e); return loadStockCelLocal(); }
+}
+
+async function sbSaveStockCelItem(equipo) {
+  try {
+    setSyncStatus('syncing', 'Guardando...');
+    const row = { ...equipo, reparaciones: JSON.stringify(equipo.reparaciones||[]) };
+    const { error } = await _sb.from('stock_cel').upsert(row);
+    if (error) throw error;
+    setSyncStatus('ok', 'Guardado ✓');
+    setTimeout(()=>setSyncStatus('ok','Sincronizado'), 2000);
+  } catch(e) { console.warn('sbSaveStockCel:', e); saveStockCelLocal(equipo); }
+}
+
+async function sbDeleteStockCelItem(id) {
+  try {
+    const { error } = await _sb.from('stock_cel').delete().eq('id', id);
+    if (error) throw error;
+  } catch(e) { console.warn('sbDeleteStockCel:', e); }
+}
+
+// ─── LOCAL FALLBACKS ───
+const AGENDA_LOCAL_KEY = 'iservice_agenda_v1';
+const STOCK_CEL_LOCAL_KEY = 'iservice_stock_cel_v1';
+function loadAgendaLocal() { try { return JSON.parse(localStorage.getItem(AGENDA_LOCAL_KEY)||'[]'); } catch(e) { return []; } }
+function saveAgendaLocal(turno) { try { const a=loadAgendaLocal(); const i=a.findIndex(x=>x.id===turno.id); if(i>=0) a[i]=turno; else a.push(turno); localStorage.setItem(AGENDA_LOCAL_KEY,JSON.stringify(a)); } catch(e) {} }
+function loadStockCelLocal() { try { return JSON.parse(localStorage.getItem(STOCK_CEL_LOCAL_KEY)||'[]'); } catch(e) { return []; } }
+function saveStockCelLocal(eq) { try { const a=loadStockCelLocal(); const i=a.findIndex(x=>x.id===eq.id); if(i>=0) a[i]=eq; else a.push(eq); localStorage.setItem(STOCK_CEL_LOCAL_KEY,JSON.stringify(a)); } catch(e) {} }
+
+// Test connection on load
+window.addEventListener('load', async () => {
+  setSyncStatus('syncing', 'Conectando...');
+  try {
+    const { error } = await _sb.from('agenda').select('count', {count:'exact',head:true});
+    if (error) throw error;
+    setSyncStatus('ok', 'Sincronizado');
+  } catch(e) {
+    setSyncStatus('offline', 'Sin conexión');
+  }
+});
+</script>
+
 </head>
 <body>
 
@@ -1362,7 +1490,7 @@ select.ri { appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmln
     </div>
     <div class="login-title">iService.Mercedes</div>
     <div class="login-sub">Sistema de Gestión · Acceso privado</div>
-    <input class="login-input" type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password"
+    <input class="login-input" type="password" id="loginPass" onkeydown="if(event.key==='Enter') doLogin()" placeholder="Contraseña" autocomplete="current-password"
       onkeydown="if(event.key==='Enter') doLogin()">
     <button class="login-btn" onclick="doLogin()">Ingresar</button>
     <div class="login-error" id="loginError"></div>
@@ -2295,8 +2423,9 @@ function renderPreview() {
   document.getElementById('remitoPreview').innerHTML = buildRemitoHTML(d);
 }
 
-function imprimirRemito() {
+async function imprimirRemito() {
   const d = getRemitoData();
+  await sbSaveRemito(d);
   const html = buildRemitoHTML(d, true);
 
   // Create a hidden print-only div
@@ -2421,36 +2550,52 @@ function renderUsados() {
 }
 
 // ─── LOGIN ───
-const PWD_HASH = 'caab204b1759ce00d1017bb1d4e2cb34921aa88a80475966e81ed521a2985883';
-const SESSION_KEY = 'iservice_auth_v1';
+// ─── LOGIN ───
+var _ISM_KEY = 'ism_v1';
 
-async function sha256(str) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-}
+function doLogin() {
+  var pass = document.getElementById('loginPass').value;
+  var ok = (pass === '7127');
 
-async function doLogin() {
-  const pass = document.getElementById('loginPass').value;
-  const hash = await sha256(pass);
-  if (hash === PWD_HASH) {
-    sessionStorage.setItem(SESSION_KEY, '1');
+  // also try SHA256 for HTTPS
+  if (!ok && window.crypto && window.crypto.subtle) {
+    window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(pass))
+      .then(function(buf) {
+        var hex = Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+        if (hex === 'c98a4af1036b3f69a1918c9d3a8e4bfc0dd5d491060d63088a8f6cfde4500091') {
+          try { sessionStorage.setItem(_ISM_KEY,'1'); } catch(e) {}
+          document.getElementById('loginOverlay').style.display = 'none';
+          var mn = document.getElementById('mobileNav');
+          if (mn) mn.style.cssText = '';
+        }
+      }).catch(function() {});
+    return;
+  }
+
+  if (ok) {
+    try { sessionStorage.setItem(_ISM_KEY,'1'); } catch(e) {}
     document.getElementById('loginOverlay').style.display = 'none';
-    document.getElementById('mobileNav').style.cssText = '';
+    var mn = document.getElementById('mobileNav');
+    if (mn) mn.style.cssText = '';
   } else {
-    const err = document.getElementById('loginError');
-    err.textContent = 'Contraseña incorrecta. Intentá de nuevo.';
+    var err = document.getElementById('loginError');
+    if (err) { err.textContent = 'Contraseña incorrecta.'; setTimeout(function(){ if(err) err.textContent=''; }, 3000); }
     document.getElementById('loginPass').value = '';
     document.getElementById('loginPass').focus();
-    setTimeout(() => { err.textContent = ''; }, 3000);
   }
 }
 
 function checkAuth() {
-  if (sessionStorage.getItem(SESSION_KEY) === '1') {
-    document.getElementById('loginOverlay').style.display = 'none';
+  var ok = false;
+  try { ok = sessionStorage.getItem(_ISM_KEY) === '1'; } catch(e) {}
+  var ov = document.getElementById('loginOverlay');
+  var mn = document.getElementById('mobileNav');
+  if (ok) {
+    if (ov) ov.style.display = 'none';
+    if (mn) mn.style.cssText = '';
   } else {
-    // Show login, hide mobile nav
-    document.getElementById('mobileNav').style.display = 'none';
+    if (ov) ov.style.display = 'flex';
+    if (mn) mn.style.display = 'none';
   }
 }
 
@@ -2491,45 +2636,39 @@ function openAgendaModal(id) {
   openModal('modal-turno');
 }
 
-function guardarTurno() {
+async function guardarTurno() {
   const nombre = document.getElementById('t_nombre').value.trim();
   if (!nombre) { alert('Ingresá el nombre del cliente.'); return; }
   const turno = {
     id: Date.now().toString(36),
     nombre,
-    tel:     document.getElementById('t_tel').value.trim(),
-    modelo:  document.getElementById('t_modelo').value,
-    fecha:   document.getElementById('t_fecha').value,
-    hora:    document.getElementById('t_hora').value,
-    servicio:document.getElementById('t_servicio').value.trim(),
-    obs:     document.getElementById('t_obs').value.trim(),
-    estado:  'pendiente'
+    tel:      document.getElementById('t_tel').value.trim(),
+    modelo:   document.getElementById('t_modelo').value,
+    fecha:    document.getElementById('t_fecha').value,
+    hora:     document.getElementById('t_hora').value,
+    servicio: document.getElementById('t_servicio').value.trim(),
+    obs:      document.getElementById('t_obs').value.trim(),
+    estado:   'pendiente'
   };
-  const agenda = loadAgenda();
-  agenda.push(turno);
-  // Sort by fecha+hora
-  agenda.sort((a,b) => (a.fecha+a.hora).localeCompare(b.fecha+b.hora));
-  saveAgenda(agenda);
+  await sbSaveAgendaItem(turno);
   closeModal('modal-turno');
-  renderAgenda();
+  await renderAgenda();
   updateHomeStats();
 }
 
-function eliminarTurno(id) {
-  const agenda = loadAgenda().filter(t => t.id !== id);
-  saveAgenda(agenda);
-  renderAgenda();
+async function eliminarTurno(id) {
+  await sbDeleteAgendaItem(id);
+  await renderAgenda();
   updateHomeStats();
 }
 
-function marcarTurnoEstado(id, estado) {
-  const agenda = loadAgenda();
-  const t = agenda.find(x => x.id === id);
-  if (t) { t.estado = estado; saveAgenda(agenda); renderAgenda(); }
+async function marcarTurnoEstado(id, estado) {
+  await sbSaveAgendaItem({ id, estado });
+  await renderAgenda();
 }
 
-function renderAgenda() {
-  const agenda = loadAgenda();
+async function renderAgenda() {
+  const agenda = await sbLoadAgenda();
   const list = document.getElementById('agendaList');
   const prox = document.getElementById('proximosTurnos');
   if (!list) return;
@@ -2664,7 +2803,7 @@ function calcStockGanancia() {
   if (el_g) { el_g.textContent = fARS(ganancia); el_g.style.color = ganancia >= 0 ? '#34d058' : '#ff453a'; }
 }
 
-function guardarStockCel() {
+async function guardarStockCel() {
   const modelo = document.getElementById('sc_modelo').value;
   if (!modelo) { alert('Seleccioná el modelo.'); return; }
   const compra = parseFloat(document.getElementById('sc_compra').value) || 0;
@@ -2687,20 +2826,16 @@ function guardarStockCel() {
     vendido: false,
   };
 
-  const stock = loadStockCel();
-  const idx = stock.findIndex(e => e.id === equipo.id);
-  if (idx >= 0) stock[idx] = equipo;
-  else stock.push(equipo);
-  saveStockCel(stock);
+  await sbSaveStockCelItem(equipo);
   closeModal('modal-stock-cel');
   renderStockCel();
   updateHomeStats();
 }
 
-function eliminarStockCel(id) {
+async function eliminarStockCel(id) {
   if (!confirm('¿Eliminar este equipo del stock?')) return;
-  saveStockCel(loadStockCel().filter(e => e.id !== id));
-  renderStockCel();
+  await sbDeleteStockCelItem(id);
+  await renderStockCel();
   updateHomeStats();
 }
 
@@ -2710,8 +2845,8 @@ function marcarVendido(id) {
   if (eq) { eq.vendido = !eq.vendido; saveStockCel(stock); renderStockCel(); updateHomeStats(); }
 }
 
-function renderStockCel() {
-  const stock = loadStockCel();
+async function renderStockCel() {
+  const stock = await sbLoadStockCel();
   const list  = document.getElementById('stockList');
   if (!list) return;
 
@@ -2923,8 +3058,8 @@ function procesarImport(texto) {
 
     if (!confirm(msg)) return;
 
-    if (datos.agenda)   saveAgenda(datos.agenda);
-    if (datos.stockCel) saveStockCel(datos.stockCel);
+    if (datos.agenda)   { datos.agenda.forEach(t => sbSaveAgendaItem(t)); }
+    if (datos.stockCel) { datos.stockCel.forEach(e => sbSaveStockCelItem(e)); }
 
     // Refresh UI
     renderAgenda();
@@ -3002,6 +3137,7 @@ function init() {
 }
 
 init();
+checkAuth();
 </script>
 
 <!-- MODAL BACKUP -->
