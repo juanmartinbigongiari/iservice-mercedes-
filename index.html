@@ -1353,9 +1353,112 @@ select.ri { appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmln
 
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-var _sb = supabase.createClient('https://mnkyybxmjfcilbtwzpog.supabase.co', 'sb_publishable_76FRdMQgqQ_z6WOu2n-6lw_dlgFTN6m');
+// Supabase REST API directo - sin SDK
+var _SB_URL = 'https://mnkyybxmjfcilbtwzpog.supabase.co';
+var _SB_KEY = 'sb_publishable_76FRdMQgqQ_z6WOu2n-6lw_dlgFTN6m';
+
+var _sb = {
+  from: function(table) {
+    return {
+      _table: table,
+      _filters: [],
+      _order: null,
+      _head: false,
+      _count: null,
+
+      select: function(cols, opts) {
+        this._cols = cols || '*';
+        if (opts && opts.head) this._head = true;
+        if (opts && opts.count) this._count = opts.count;
+        return this;
+      },
+      order: function(col, opts) {
+        this._order = (this._order ? this._order + ',' : '') + col + (opts && opts.ascending===false ? '.desc' : '.asc');
+        return this;
+      },
+      eq: function(col, val) {
+        this._filters.push(col + '=eq.' + val);
+        return this;
+      },
+      upsert: async function(data) {
+        try {
+          var res = await fetch(_SB_URL + '/rest/v1/' + this._table, {
+            method: 'POST',
+            headers: {
+              'apikey': _SB_KEY,
+              'Authorization': 'Bearer ' + _SB_KEY,
+              'Content-Type': 'application/json',
+              'Prefer': 'resolution=merge-duplicates,return=minimal'
+            },
+            body: JSON.stringify(Array.isArray(data) ? data : [data])
+          });
+          if (!res.ok) {
+            var err = await res.json();
+            console.error('Supabase upsert error:', err);
+            return { error: err };
+          }
+          return { data: null, error: null };
+        } catch(e) { return { error: e }; }
+      },
+      delete: function() { return this; },
+      _doDelete: async function(filters) {
+        try {
+          var url = _SB_URL + '/rest/v1/' + this._table + '?' + filters.join('&');
+          var res = await fetch(url, {
+            method: 'DELETE',
+            headers: {
+              'apikey': _SB_KEY,
+              'Authorization': 'Bearer ' + _SB_KEY,
+              'Content-Type': 'application/json'
+            }
+          });
+          if (!res.ok) { var err = await res.json(); return { error: err }; }
+          return { error: null };
+        } catch(e) { return { error: e }; }
+      },
+      then: async function(resolve) {
+        try {
+          var url = _SB_URL + '/rest/v1/' + this._table;
+          var params = [];
+          if (this._cols && this._cols !== '*') params.push('select=' + this._cols);
+          else params.push('select=*');
+          if (this._filters.length) params = params.concat(this._filters);
+          if (this._order) params.push('order=' + this._order);
+          if (params.length) url += '?' + params.join('&');
+
+          var headers = {
+            'apikey': _SB_KEY,
+            'Authorization': 'Bearer ' + _SB_KEY,
+            'Content-Type': 'application/json'
+          };
+          if (this._head) headers['Prefer'] = 'count=' + (this._count||'exact');
+
+          var res = await fetch(url, { method: this._head ? 'HEAD' : 'GET', headers: headers });
+          if (!res.ok) { var err = await res.json(); resolve({ data: null, error: err }); return; }
+          var data = this._head ? null : await res.json();
+          resolve({ data: data, error: null });
+        } catch(e) { resolve({ data: null, error: e }); }
+      }
+    };
+  }
+};
+
+// Wrapper for delete with eq
+var _origFrom = _sb.from.bind(_sb);
+_sb.from = function(table) {
+  var obj = _origFrom(table);
+  var origDelete = obj.delete.bind(obj);
+  obj.delete = function() {
+    var that = this;
+    return {
+      eq: async function(col, val) {
+        return await that._doDelete([col + '=eq.' + val]);
+      }
+    };
+  };
+  return obj;
+};
 
 // Sync indicator
 function setSyncDot(color, text) {
