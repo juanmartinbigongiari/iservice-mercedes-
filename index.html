@@ -1352,206 +1352,6 @@ select.ri { appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmln
 .backup-info strong { color: var(--text-primary); }
 
 </style>
-
-<script>
-// Supabase REST API directo - sin SDK
-var _SB_URL = 'https://mnkyybxmjfcilbtwzpog.supabase.co';
-var _SB_KEY = 'sb_publishable_76FRdMQgqQ_z6WOu2n-6lw_dlgFTN6m';
-
-var _sb = {
-  from: function(table) {
-    return {
-      _table: table,
-      _filters: [],
-      _order: null,
-      _head: false,
-      _count: null,
-
-      select: function(cols, opts) {
-        this._cols = cols || '*';
-        if (opts && opts.head) this._head = true;
-        if (opts && opts.count) this._count = opts.count;
-        return this;
-      },
-      order: function(col, opts) {
-        this._order = (this._order ? this._order + ',' : '') + col + (opts && opts.ascending===false ? '.desc' : '.asc');
-        return this;
-      },
-      eq: function(col, val) {
-        this._filters.push(col + '=eq.' + val);
-        return this;
-      },
-      upsert: async function(data) {
-        try {
-          var res = await fetch(_SB_URL + '/rest/v1/' + this._table, {
-            method: 'POST',
-            headers: {
-              'apikey': _SB_KEY,
-              'Authorization': 'Bearer ' + _SB_KEY,
-              'Content-Type': 'application/json',
-              'Prefer': 'resolution=merge-duplicates,return=minimal'
-            },
-            body: JSON.stringify(Array.isArray(data) ? data : [data])
-          });
-          if (!res.ok) {
-            var err = await res.json();
-            console.error('Supabase upsert error:', err);
-            return { error: err };
-          }
-          return { data: null, error: null };
-        } catch(e) { return { error: e }; }
-      },
-      delete: function() { return this; },
-      _doDelete: async function(filters) {
-        try {
-          var url = _SB_URL + '/rest/v1/' + this._table + '?' + filters.join('&');
-          var res = await fetch(url, {
-            method: 'DELETE',
-            headers: {
-              'apikey': _SB_KEY,
-              'Authorization': 'Bearer ' + _SB_KEY,
-              'Content-Type': 'application/json'
-            }
-          });
-          if (!res.ok) { var err = await res.json(); return { error: err }; }
-          return { error: null };
-        } catch(e) { return { error: e }; }
-      },
-      then: async function(resolve) {
-        try {
-          var url = _SB_URL + '/rest/v1/' + this._table;
-          var params = [];
-          if (this._cols && this._cols !== '*') params.push('select=' + this._cols);
-          else params.push('select=*');
-          if (this._filters.length) params = params.concat(this._filters);
-          if (this._order) params.push('order=' + this._order);
-          if (params.length) url += '?' + params.join('&');
-
-          var headers = {
-            'apikey': _SB_KEY,
-            'Authorization': 'Bearer ' + _SB_KEY,
-            'Content-Type': 'application/json'
-          };
-          if (this._head) headers['Prefer'] = 'count=' + (this._count||'exact');
-
-          var res = await fetch(url, { method: this._head ? 'HEAD' : 'GET', headers: headers });
-          if (!res.ok) { var err = await res.json(); resolve({ data: null, error: err }); return; }
-          var data = this._head ? null : await res.json();
-          resolve({ data: data, error: null });
-        } catch(e) { resolve({ data: null, error: e }); }
-      }
-    };
-  }
-};
-
-// Wrapper for delete with eq
-var _origFrom = _sb.from.bind(_sb);
-_sb.from = function(table) {
-  var obj = _origFrom(table);
-  var origDelete = obj.delete.bind(obj);
-  obj.delete = function() {
-    var that = this;
-    return {
-      eq: async function(col, val) {
-        return await that._doDelete([col + '=eq.' + val]);
-      }
-    };
-  };
-  return obj;
-};
-
-// Sync indicator
-function setSyncDot(color, text) {
-  var el = document.getElementById('syncDot');
-  if (!el) {
-    var nav = document.querySelector('.nav');
-    if (nav) {
-      el = document.createElement('span');
-      el.id = 'syncDot';
-      el.style.cssText = 'font-size:11px;font-weight:500;color:#6e6e73;display:flex;align-items:center;gap:4px;white-space:nowrap;';
-      nav.appendChild(el);
-    }
-  }
-  if (el) el.innerHTML = '<span style="width:7px;height:7px;border-radius:50%;background:'+color+';display:inline-block;flex-shrink:0;"></span> '+text;
-}
-
-// ── AGENDA ──
-async function sbLoadAgenda() {
-  try {
-    var r = await _sb.from('agenda').select('*').order('fecha').order('hora');
-    if (r.error) throw r.error;
-    return r.data || [];
-  } catch(e) { return loadAgendaLocal(); }
-}
-async function sbSaveAgendaItem(t) {
-  try { await _sb.from('agenda').upsert(t); setSyncDot('#34c759','Guardado ✓'); setTimeout(function(){setSyncDot('#34c759','Sincronizado');},2000); }
-  catch(e) { saveAgendaLocal(t); setSyncDot('#ff3b30','Sin conexión'); }
-}
-async function sbDeleteAgendaItem(id) {
-  try { await _sb.from('agenda').delete().eq('id',id); } catch(e) {}
-}
-
-// ── STOCK CEL ──
-async function sbLoadStockCel() {
-  try {
-    var r = await _sb.from('stock_cel').select('*').order('created_at',{ascending:false});
-    if (r.error) throw r.error;
-    return (r.data||[]).map(function(x){ return Object.assign(x,{reparaciones: typeof x.reparaciones==='string'?JSON.parse(x.reparaciones||'[]'):(x.reparaciones||[])}); });
-  } catch(e) { return loadStockCelLocal(); }
-}
-async function sbSaveStockCelItem(eq) {
-  try {
-    var row = Object.assign({},eq,{reparaciones:JSON.stringify(eq.reparaciones||[])});
-    await _sb.from('stock_cel').upsert(row);
-    setSyncDot('#34c759','Guardado ✓');
-    setTimeout(function(){setSyncDot('#34c759','Sincronizado');},2000);
-  } catch(e) { saveStockCelLocal(eq); setSyncDot('#ff3b30','Sin conexión'); }
-}
-async function sbDeleteStockCelItem(id) {
-  try { await _sb.from('stock_cel').delete().eq('id',id); } catch(e) {}
-}
-
-// ── REMITOS ──
-async function sbSaveRemito(rem) {
-  try {
-    setSyncDot('#ff9f0a','Guardando...');
-    var row = Object.assign({},rem,{checks:JSON.stringify(rem.checks||[])});
-    var r = await _sb.from('remitos').upsert(row);
-    if (r.error) throw r.error;
-    setSyncDot('#34c759','Remito guardado ✓');
-    setTimeout(function(){setSyncDot('#34c759','Sincronizado');},2500);
-    return true;
-  } catch(e) { setSyncDot('#ff3b30','Sin conexión'); return false; }
-}
-async function sbLoadRemitos() {
-  try {
-    var r = await _sb.from('remitos').select('*').order('created_at',{ascending:false});
-    if (r.error) throw r.error;
-    return (r.data||[]).map(function(x){ return Object.assign(x,{checks:typeof x.checks==='string'?JSON.parse(x.checks||'[]'):(x.checks||[])}); });
-  } catch(e) { return []; }
-}
-async function sbDeleteRemito(id) {
-  try { await _sb.from('remitos').delete().eq('id',id); } catch(e) {}
-}
-
-// ── LOCAL FALLBACKS ──
-function loadAgendaLocal() { try { return JSON.parse(localStorage.getItem('iservice_agenda_v1')||'[]'); } catch(e) { return []; } }
-function saveAgendaLocal(t) { try { var a=loadAgendaLocal(); var i=a.findIndex(function(x){return x.id===t.id;}); if(i>=0) a[i]=t; else a.push(t); localStorage.setItem('iservice_agenda_v1',JSON.stringify(a)); } catch(e) {} }
-function loadStockCelLocal() { try { return JSON.parse(localStorage.getItem('iservice_stock_cel_v1')||'[]'); } catch(e) { return []; } }
-function saveStockCelLocal(eq) { try { var a=loadStockCelLocal(); var i=a.findIndex(function(x){return x.id===eq.id;}); if(i>=0) a[i]=eq; else a.push(eq); localStorage.setItem('iservice_stock_cel_v1',JSON.stringify(a)); } catch(e) {} }
-
-// Test connection
-window.addEventListener('load', function() {
-  setTimeout(async function() {
-    try {
-      var r = await _sb.from('agenda').select('count',{count:'exact',head:true});
-      if (r.error) throw r.error;
-      setSyncDot('#34c759','Sincronizado');
-    } catch(e) { setSyncDot('#aeaeb2','Sin conexión'); }
-  }, 1500);
-});
-</script>
-
 </head>
 <body>
 
@@ -2495,9 +2295,8 @@ function renderPreview() {
   document.getElementById('remitoPreview').innerHTML = buildRemitoHTML(d);
 }
 
-async function imprimirRemito() {
+function imprimirRemito() {
   const d = getRemitoData();
-  await sbSaveRemito(d);
   const html = buildRemitoHTML(d, true);
 
   // Create a hidden print-only div
@@ -2691,7 +2490,7 @@ function openAgendaModal(id) {
   openModal('modal-turno');
 }
 
-async function guardarTurno() {
+function guardarTurno() {
   const nombre = document.getElementById('t_nombre').value.trim();
   if (!nombre) { alert('Ingresá el nombre del cliente.'); return; }
   const turno = {
@@ -2705,25 +2504,31 @@ async function guardarTurno() {
     obs:     document.getElementById('t_obs').value.trim(),
     estado:  'pendiente'
   };
-  await sbSaveAgendaItem(turno);
+  const agenda = loadAgenda();
+  agenda.push(turno);
+  // Sort by fecha+hora
+  agenda.sort((a,b) => (a.fecha+a.hora).localeCompare(b.fecha+b.hora));
+  saveAgenda(agenda);
   closeModal('modal-turno');
   renderAgenda();
   updateHomeStats();
 }
 
-async function eliminarTurno(id) {
-  await sbDeleteAgendaItem(id);
+function eliminarTurno(id) {
+  const agenda = loadAgenda().filter(t => t.id !== id);
+  saveAgenda(agenda);
   renderAgenda();
   updateHomeStats();
 }
 
-async function marcarTurnoEstado(id, estado) {
-  await sbSaveAgendaItem({ id: id, estado: estado });
-  renderAgenda();
+function marcarTurnoEstado(id, estado) {
+  const agenda = loadAgenda();
+  const t = agenda.find(x => x.id === id);
+  if (t) { t.estado = estado; saveAgenda(agenda); renderAgenda(); }
 }
 
-async function renderAgenda() {
-  const agenda = await sbLoadAgenda();
+function renderAgenda() {
+  const agenda = loadAgenda();
   const list = document.getElementById('agendaList');
   const prox = document.getElementById('proximosTurnos');
   if (!list) return;
@@ -2858,7 +2663,7 @@ function calcStockGanancia() {
   if (el_g) { el_g.textContent = fARS(ganancia); el_g.style.color = ganancia >= 0 ? '#34d058' : '#ff453a'; }
 }
 
-async function guardarStockCel() {
+function guardarStockCel() {
   const modelo = document.getElementById('sc_modelo').value;
   if (!modelo) { alert('Seleccioná el modelo.'); return; }
   const compra = parseFloat(document.getElementById('sc_compra').value) || 0;
@@ -2881,7 +2686,11 @@ async function guardarStockCel() {
     vendido: false,
   };
 
-  await sbSaveStockCelItem(equipo);
+  const stock = loadStockCel();
+  const idx = stock.findIndex(e => e.id === equipo.id);
+  if (idx >= 0) stock[idx] = equipo;
+  else stock.push(equipo);
+  saveStockCel(stock);
   closeModal('modal-stock-cel');
   renderStockCel();
   updateHomeStats();
@@ -2900,8 +2709,8 @@ function marcarVendido(id) {
   if (eq) { eq.vendido = !eq.vendido; saveStockCel(stock); renderStockCel(); updateHomeStats(); }
 }
 
-async function renderStockCel() {
-  const stock = await sbLoadStockCel();
+function renderStockCel() {
+  const stock = loadStockCel();
   const list  = document.getElementById('stockList');
   if (!list) return;
 
@@ -3018,7 +2827,7 @@ function actualizarBackupStats() {
   `;
 }
 
-async function exportarDatos() {
+function exportarDatos() {
   const datos = {
     version: '1.0',
     fecha: new Date().toISOString(),
@@ -3113,8 +2922,8 @@ function procesarImport(texto) {
 
     if (!confirm(msg)) return;
 
-    if (datos.agenda)   datos.agenda.forEach(function(t){ sbSaveAgendaItem(t); });
-    if (datos.stockCel) datos.stockCel.forEach(function(e){ sbSaveStockCelItem(e); });
+    if (datos.agenda)   saveAgenda(datos.agenda);
+    if (datos.stockCel) saveStockCel(datos.stockCel);
 
     // Refresh UI
     renderAgenda();
