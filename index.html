@@ -2330,94 +2330,121 @@ function imprimirRemito() {
 // Fuentes: MercadoLibre, HeyShop, GrupoTec, CelluMarket
 // Precio en USD del segmento medio del mercado usado (batería 85-95%, buen estado)
 const USADOS = [
-  // Datos reales del catálogo iPhoneGlory (cocoscrm) · Marzo 2026
-  // Precios son VENTA AL CLIENTE en USD · Grado estético A/A+/A-
-  // usdMin = precio más bajo visto en catálogo · usdMax = más alto · usdAvg = promedio
-
-  { modelo: 'iPhone SE 2022',   cap: '256GB', grado: 'A+',  usdMin: 185,  usdMax: 185,  usdAvg: 185,  nota: 'Chip A15, diseño clásico con botón físico' },
-  { modelo: 'iPhone 11 Pro',    cap: '64GB',  grado: 'B+',  usdMin: 265,  usdMax: 265,  usdAvg: 265,  nota: 'Triple cámara, OLED, chip A13' },
-  { modelo: 'iPhone 12',        cap: '128GB', grado: 'A/B+',usdMin: 265,  usdMax: 295,  usdAvg: 280,  nota: '5G, MagSafe, OLED — muy buscado' },
-  { modelo: 'iPhone 12 Pro',    cap: '128GB', grado: 'A/A+',usdMin: 295,  usdMax: 310,  usdAvg: 302,  nota: 'Triple cámara ProRAW, LiDAR, OLED' },
-  { modelo: 'iPhone 13',        cap: '128GB', grado: 'A/A+',usdMin: 325,  usdMax: 375,  usdAvg: 354,  nota: 'Chip A15, mejor batería, notch reducido — el más vendido' },
-  { modelo: 'iPhone 13 Pro',    cap: '128GB', grado: 'A/B+',usdMin: 410,  usdMax: 455,  usdAvg: 426,  nota: 'ProMotion 120Hz, triple cámara, LiDAR' },
-  { modelo: 'iPhone 14 Plus',   cap: '128GB', grado: 'A',   usdMin: 415,  usdMax: 415,  usdAvg: 415,  nota: 'Pantalla grande 6.7" sin Pro, buena batería' },
-  { modelo: 'iPhone 14 Pro Max',cap: '256GB', grado: 'A/A+',usdMin: 620,  usdMax: 650,  usdAvg: 640,  nota: 'Dynamic Island, chip A16, zoom 3x — alta demanda' },
-  { modelo: 'iPhone 15',        cap: '128GB', grado: 'A/A-',usdMin: 470,  usdMax: 490,  usdAvg: 477,  nota: 'USB-C, Dynamic Island, chip A16' },
-  { modelo: 'iPhone 15 Pro Max',cap: '256GB', grado: 'A/A+',usdMin: 690,  usdMax: 790,  usdAvg: 736,  nota: 'Titanio, zoom 5x tetraprismático, chip A17 Pro' },
-  { modelo: 'iPhone 16',        cap: '128GB', grado: 'AA+', usdMin: 655,  usdMax: 655,  usdAvg: 655,  nota: 'Botón Cámara, chip A18, Apple Intelligence' },
-  { modelo: 'iPhone 16 Pro',    cap: '128GB', grado: 'A/A+',usdMin: 765,  usdMax: 765,  usdAvg: 765,  nota: 'Pantalla 6.3" ProMotion, cámara 48MP gran angular' },
-  { modelo: 'iPhone 16 Pro Max',cap: '256GB', grado: 'A/A+',usdMin: 920,  usdMax: 965,  usdAvg: 937,  nota: 'Pantalla 6.9" más grande, zoom 5x, chip A18 Pro' },
-  { modelo: 'iPhone 17 Pro',    cap: '256GB', grado: 'A++', usdMin: 1190, usdMax: 1190, usdAvg: 1190, nota: 'Nuevo — barra de cámara horizontal, chip A19 Pro' },
+  { modelo: 'iPhone 14',         cap: '128GB', usdAvg: 395,  usdMin: 395,  usdMax: 395,  tipo: 'usado',   nota: 'Chip A15, USB-C, Dynamic Island' },
+  { modelo: 'iPhone 14 Pro',     cap: '128GB', usdAvg: 410,  usdMin: 410,  usdMax: 410,  tipo: 'usado',   nota: 'Chip A16, camara 48MP, Dynamic Island' },
+  { modelo: 'iPhone 14 Pro',     cap: '256GB', usdAvg: 490,  usdMin: 490,  usdMax: 490,  tipo: 'usado',   nota: 'Chip A16, camara 48MP, Dynamic Island' },
+  { modelo: 'iPhone 14 Pro',     cap: '512GB', usdAvg: 515,  usdMin: 515,  usdMax: 515,  tipo: 'usado',   nota: 'Chip A16, camara 48MP, Dynamic Island' },
+  { modelo: 'iPhone 15',         cap: '256GB', usdAvg: 480,  usdMin: 480,  usdMax: 480,  tipo: 'usado',   nota: 'USB-C, Dynamic Island, chip A16' },
+  { modelo: 'iPhone 15 Pro',     cap: '128GB', usdAvg: 528,  usdMin: 470,  usdMax: 585,  tipo: 'usado',   nota: 'Titanio, zoom 3x, chip A17 Pro' },
+  { modelo: 'iPhone 15 Pro Max', cap: '256GB', usdAvg: 690,  usdMin: 690,  usdMax: 690,  tipo: 'usado',   nota: 'Titanio, zoom 5x, chip A17 Pro' },
+  { modelo: 'iPhone 16 Pro',     cap: '128GB', usdAvg: 765,  usdMin: 765,  usdMax: 765,  tipo: 'usado',   nota: 'Boton Camara, chip A18 Pro, Apple Intelligence' },
+  { modelo: 'iPhone 15',         cap: '128GB', usdAvg: 660,  usdMin: 660,  usdMax: 660,  tipo: 'sellado', nota: '+$10.000 ARS envio (comprando 2 equipos)' },
+  { modelo: 'iPhone 15',         cap: '256GB', usdAvg: 775,  usdMin: 775,  usdMax: 775,  tipo: 'sellado', nota: '+$10.000 ARS envio (comprando 2 equipos)' },
+  { modelo: 'iPhone 16',         cap: '128GB', usdAvg: 780,  usdMin: 780,  usdMax: 780,  tipo: 'sellado', nota: '+$10.000 ARS envio (comprando 2 equipos)' },
+  { modelo: 'iPhone 17e',        cap: '256GB', usdAvg: 675,  usdMin: 675,  usdMax: 675,  tipo: 'sellado', nota: '+$10.000 ARS envio (comprando 2 equipos)' },
+  { modelo: 'iPhone 17',         cap: '256GB', usdAvg: 920,  usdMin: 920,  usdMax: 920,  tipo: 'sellado', nota: '+$10.000 ARS envio (comprando 2 equipos)' },
+  { modelo: 'iPhone 17 Air',     cap: '256GB', usdAvg: 980,  usdMin: 980,  usdMax: 980,  tipo: 'sellado', nota: '+$10.000 ARS envio (comprando 2 equipos)' },
+  { modelo: 'iPhone 17 Pro',     cap: '256GB', usdAvg: 1300, usdMin: 1300, usdMax: 1300, tipo: 'sellado', nota: '+$10.000 ARS envio (comprando 2 equipos)' },
+  { modelo: 'iPhone 17 Pro',     cap: '512GB', usdAvg: 1500, usdMin: 1500, usdMax: 1500, tipo: 'sellado', nota: '+$10.000 ARS envio (comprando 2 equipos)' },
+  { modelo: 'iPhone 17 Pro Max', cap: '256GB', usdAvg: 1450, usdMin: 1450, usdMax: 1450, tipo: 'sellado', nota: '+$10.000 ARS envio (comprando 2 equipos)' },
+  { modelo: 'iPhone 17 Pro Max', cap: '512GB', usdAvg: 1660, usdMin: 1660, usdMax: 1660, tipo: 'sellado', nota: '+$10.000 ARS envio (comprando 2 equipos)' },
+  { modelo: 'iPhone 17 Pro Max', cap: '1TB',   usdAvg: 1860, usdMin: 1860, usdMax: 1860, tipo: 'sellado', nota: '+$10.000 ARS envio (comprando 2 equipos)' },
 ];
 
 function renderUsados() {
   const q = (document.getElementById('usadosSearch')?.value || '').toLowerCase();
   const margen = parseFloat(document.getElementById('margenSelect')?.value || '0.20');
+  const TC = parseFloat(document.getElementById('tcInput')?.value || document.getElementById('tcManual')?.value || 1300);
+  const ENVIO_SELLADO = 10000; // ARS por equipo comprando de a 2
+
+  let filtered = USADOS.filter(u => {
+    if (!q) return true;
+    return (u.modelo + ' ' + u.cap + ' ' + (u.tipo||'')).toLowerCase().includes(q);
+  });
+
+  // Separar usados y sellados
+  const usados   = filtered.filter(u => u.tipo !== 'sellado');
+  const sellados = filtered.filter(u => u.tipo === 'sellado');
+
+  function buildCard(u) {
+    const ventaAvg = Math.round(u.usdAvg * TC / 1000) * 1000;
+    const ventaMin = Math.round(u.usdMin * TC / 1000) * 1000;
+    const ventaMax = Math.round(u.usdMax * TC / 1000) * 1000;
+    const esVendido = u.tipo === 'sellado';
+    const extraARS  = esVendido ? ENVIO_SELLADO : 0;
+    // Precio toma = precio compra máximo que conviene pagar
+    const compraMax = Math.round((ventaAvg * (1 - margen)) / 500) * 500;
+    const costoTotal = ventaAvg + extraARS; // costo real del sellado
+    const ganancia  = ventaAvg - compraMax;
+    const rangoIgual = ventaMin === ventaMax;
+    const badge = esVendido
+      ? '<span style="background:#1d1d1f;color:white;font-size:9px;font-weight:700;padding:2px 7px;border-radius:5px;letter-spacing:.3px;">SELLADO</span>'
+      : '<span style="background:rgba(52,199,89,0.12);color:#1a7a3a;font-size:9px;font-weight:700;padding:2px 7px;border-radius:5px;letter-spacing:.3px;">USADO</span>';
+
+    return `
+      <div style="padding:13px 0;border-bottom:1px solid var(--border);">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:140px;">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px;flex-wrap:wrap;">
+              <span style="font-size:14px;font-weight:700;">${u.modelo}</span>
+              <span style="font-size:13px;font-weight:500;color:var(--text-secondary);">${u.cap}</span>
+              ${badge}
+            </div>
+            ${u.nota ? `<div style="font-size:11px;color:var(--text-tertiary);line-height:1.4;margin-bottom:5px;">${u.nota}</div>` : ''}
+            <div style="font-size:11px;color:var(--text-secondary);">
+              Precio mercado: <strong>U$D ${u.usdMin}${rangoIgual ? '' : ' – U$D ' + u.usdMax}</strong>
+              ${esVendido ? ` · <span style="color:#ff9f0a;font-weight:600;">+$${ENVIO_SELLADO.toLocaleString('es-AR')} envío</span>` : ''}
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;flex-shrink:0;flex-wrap:wrap;">
+            ${!esVendido ? `
+            <div style="text-align:center;background:rgba(0,113,227,0.07);border-radius:10px;padding:9px 13px;">
+              <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);margin-bottom:2px;">Tomar hasta</div>
+              <div style="font-size:17px;font-weight:800;color:var(--accent);letter-spacing:-.3px;">${fmtARS(compraMax)}</div>
+              <div style="font-size:10px;color:var(--text-tertiary);">U$D ${Math.round(u.usdAvg*(1-margen))} · ${Math.round(margen*100)}% margen</div>
+            </div>` : ''}
+            <div style="text-align:center;background:var(--surface);border-radius:10px;padding:9px 13px;">
+              <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-secondary);margin-bottom:2px;">${esVendido ? 'Precio total' : 'Vender a'}</div>
+              <div style="font-size:17px;font-weight:800;color:var(--text-primary);letter-spacing:-.3px;">${fmtARS(esVendido ? costoTotal : ventaAvg)}</div>
+              <div style="font-size:10px;color:var(--green);font-weight:600;">${esVendido ? `incl. envío` : `+${fmtARS(ganancia)} ganancia`}</div>
+            </div>
+          </div>
+        </div>
+        ${!rangoIgual && !esVendido ? `<div style="margin-top:7px;display:flex;gap:7px;flex-wrap:wrap;">
+          <div style="font-size:11px;background:var(--surface);border-radius:6px;padding:2px 8px;color:var(--text-secondary);">Mín: <strong>${fmtARS(ventaMin)}</strong></div>
+          <div style="font-size:11px;background:var(--surface);border-radius:6px;padding:2px 8px;color:var(--text-secondary);">Máx: <strong>${fmtARS(ventaMax)}</strong></div>
+        </div>` : ''}
+      </div>`;
+  }
+
+  function fmtARS(n) {
+    return '$' + Math.round(n).toLocaleString('es-AR');
+  }
+
   const grid = document.getElementById('usadosGrid');
   if (!grid) return;
 
-  const filtered = USADOS.filter(u => !q || u.modelo.toLowerCase().includes(q) || u.cap.toLowerCase().includes(q));
+  let html = '';
 
-  if (!filtered.length) {
-    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><p>Sin resultados</p></div>';
-    return;
+  if (usados.length > 0) {
+    html += `<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-tertiary);padding:14px 0 6px;">
+      Equipos usados (${usados.length})
+    </div>`;
+    html += usados.map(buildCard).join('');
   }
 
-  // Group by model
-  const groups = {};
-  filtered.forEach(u => {
-    if (!groups[u.modelo]) groups[u.modelo] = [];
-    groups[u.modelo].push(u);
-  });
+  if (sellados.length > 0) {
+    html += `<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-tertiary);padding:18px 0 6px;border-top:${usados.length?'2px solid var(--border)':'none'};margin-top:${usados.length?'6px':'0'};">
+      Equipos sellados (${sellados.length}) · envío $10.000 ARS c/u comprando de a 2
+    </div>`;
+    html += sellados.map(buildCard).join('');
+  }
 
-  grid.innerHTML = Object.entries(groups).map(([modelo, items]) => {
-    const rows = items.map(u => {
-      const ventaMin = Math.round(u.usdMin * TC / 1000) * 1000;
-      const ventaMax = Math.round(u.usdMax * TC / 1000) * 1000;
-      const ventaAvg = Math.round(u.usdAvg * TC / 1000) * 1000;
-      const compraMax = Math.round(ventaAvg * (1 - margen) / 500) * 500;
-      const gananciaEst = ventaAvg - compraMax;
-      const rangoIgual = ventaMin === ventaMax;
-      return `
-        <div style="padding:12px 0;border-bottom:1px solid var(--border);">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
-            <div style="flex:1;min-width:120px;">
-              <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
-                <span style="font-size:13px;font-weight:600;">${u.cap}</span>
-                <span style="font-size:10px;background:var(--surface);border-radius:5px;padding:1px 6px;color:var(--text-secondary);font-weight:500;">Grado ${u.grado}</span>
-              </div>
-              ${u.nota ? '<div style="font-size:11px;color:var(--text-tertiary);line-height:1.4;">' + u.nota + '</div>' : ''}
-              <div style="margin-top:6px;font-size:11px;color:var(--text-secondary);">
-                Rango catálogo: <strong>U$D ${u.usdMin}${rangoIgual ? '' : ' – U$D ' + u.usdMax}</strong>
-                &nbsp;·&nbsp; Promedio: <strong>U$D ${u.usdAvg}</strong>
-              </div>
-            </div>
-            <div style="display:flex;gap:12px;align-items:center;flex-shrink:0;">
-              <div style="text-align:center;background:rgba(0,113,227,0.07);border-radius:10px;padding:10px 14px;">
-                <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);margin-bottom:3px;">Tomar hasta</div>
-                <div style="font-size:18px;font-weight:800;color:var(--accent);letter-spacing:-0.3px;">${fARS(compraMax)}</div>
-                <div style="font-size:10px;color:var(--text-tertiary);">U$D ${Math.round(u.usdAvg*(1-margen))} · ${Math.round(margen*100)}% margen</div>
-              </div>
-              <div style="text-align:center;background:var(--surface);border-radius:10px;padding:10px 14px;">
-                <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-secondary);margin-bottom:3px;">Vender (prom.)</div>
-                <div style="font-size:18px;font-weight:800;color:var(--text-primary);letter-spacing:-0.3px;">${fARS(ventaAvg)}</div>
-                <div style="font-size:10px;color:var(--green);font-weight:600;">+${fARS(gananciaEst)} ganancia est.</div>
-              </div>
-            </div>
-          </div>
-          ${!rangoIgual ? '<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;"><div style="font-size:11px;background:var(--surface);border-radius:6px;padding:3px 8px;color:var(--text-secondary);">Mínimo catálogo: <strong>' + fARS(ventaMin) + '</strong></div><div style="font-size:11px;background:var(--surface);border-radius:6px;padding:3px 8px;color:var(--text-secondary);">Máximo catálogo: <strong>' + fARS(ventaMax) + '</strong></div></div>' : ''}
-        </div>`;
-    }).join('');
+  if (!filtered.length) {
+    html = '<div class="empty-state" style="padding:40px 0;"><p>No se encontraron equipos.</p></div>';
+  }
 
-    return `
-      <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm);">
-        <div style="background:var(--text-primary);padding:12px 16px;display:flex;align-items:center;gap:8px;">
-          <svg width="14" height="14" viewBox="0 0 814 1000" fill="white" style="flex-shrink:0;opacity:.7;"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 376.7 0 248.7 0 124.8 0 56.1 24.7 11.9 68.3 11.9c84.7 0 176.7 106.2 189.8 121.4 26.3 29.9 73.6 77.2 109 77.2s73.2-14.4 104.6-31.5c12.1-6.6 36.5-15.3 63.5-15.3 4.5 0 109 3.1 173.5 69.3z"/></svg>
-          <span style="font-size:14px;font-weight:700;color:white;letter-spacing:-0.2px;">${modelo}</span>
-        </div>
-        <div style="padding:0 16px;">${rows}</div>
-      </div>`;
-  }).join('');
+  grid.innerHTML = html;
 }
 
 // ─── LOGIN ───
